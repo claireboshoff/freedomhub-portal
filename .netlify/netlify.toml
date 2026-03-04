@@ -1,0 +1,43 @@
+functionsDirectory = "/Users/claireboshoff/Downloads/claude-workspace-template/website/portal/netlify/functions"
+functionsDirectoryOrigin = "config-v1"
+redirectsOrigin = "config"
+plugins = []
+headers = []
+
+[build]
+publish = "/Users/claireboshoff/Downloads/claude-workspace-template/website/portal/dist"
+publishOrigin = "config"
+commandOrigin = "config"
+base = "/Users/claireboshoff/Downloads/claude-workspace-template/website/portal"
+command = "npm run build"
+functions = "/Users/claireboshoff/Downloads/claude-workspace-template/website/portal/netlify/functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[functions]
+
+[functions."*"]
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
