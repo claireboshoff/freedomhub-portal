@@ -93,6 +93,9 @@ export const api = {
   approveProject(projectId) {
     return request('approve-project', { method: 'POST', body: { projectId } });
   },
+  completeProject(projectId) {
+    return request('complete-project', { method: 'POST', body: { projectId } });
+  },
   submitProjectFeedback(projectId, feedback) {
     return request('project-feedback', { method: 'POST', body: { projectId, feedback } });
   },

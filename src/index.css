@@ -470,6 +470,11 @@ a { color: var(--gold-dark); text-decoration: none; }
 .flow-gate-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-top: 1px solid var(--gray-100); font-size: 0.875rem; }
 .flow-live { text-align: center; padding: 24px; }
 .flow-live h4 { color: var(--green); margin-bottom: 12px; }
+.flow-card--celebration { text-align: center; background: linear-gradient(135deg, #f0fdf4 0%, #fefce8 100%); border: 1px solid #bbf7d0; }
+.flow-celebration { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px; }
+.flow-celebration h3 { color: var(--green); font-size: 1.5rem; margin: 0; }
+.flow-celebration p { color: var(--gray-600); margin: 0; }
+.btn--lg { padding: 14px 32px; font-size: 1rem; }
 
 /* Build Progress */
 .build-progress { margin-bottom: 16px; }

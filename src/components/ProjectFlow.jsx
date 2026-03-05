@@ -345,7 +345,7 @@ export default function ProjectFlow({ client }) {
     setSubmitting(true);
     try {
       await api.approveProject(projectId);
-      setProject((prev) => ({ ...prev, currentPhase: 'Launch', status: 'Active' }));
+      setProject((prev) => ({ ...prev, currentPhase: 'Launch', status: 'Awaiting Payment', latestUpdate: 'Build approved. Awaiting final payment before go-live.' }));
     } catch {
       alert('Failed to approve. Please try again.');
     }
@@ -537,21 +537,55 @@ export default function ProjectFlow({ client }) {
 
         {/* Phase E: Launch */}
         {effectivePhase === 'Launch' && (
-          <div className="flow-card">
-            {project.liveUrl ? (
-              <div className="flow-live">
-                <h3>Your project is live!</h3>
-                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="btn btn--primary">
-                  View Live Site
-                </a>
+          <>
+            {/* Final Gate: balance invoice must be paid before live URL is released */}
+            {project.status === 'Awaiting Payment' && (
+              <div className="flow-card">
+                <h3>Almost There — Final Payment</h3>
+                <p>Your build has been approved. Once the final balance is settled, we will deploy and hand over your project.</p>
+                <PaymentSection
+                  project={project}
+                  projectId={projectId}
+                  invoices={invoices}
+                  onUpdate={handleProjectUpdate}
+                />
               </div>
-            ) : (
-              <>
-                <h3>Launch Phase</h3>
-                {project.latestUpdate ? <p>{project.latestUpdate}</p> : <p className="empty-state">Preparing for launch...</p>}
-              </>
             )}
-          </div>
+
+            {/* Project is complete and live */}
+            {project.status === 'Complete' && (
+              <div className="flow-card flow-card--celebration">
+                <div className="flow-celebration">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                  <h3>Your project is live!</h3>
+                  <p>Thank you for choosing FreedomHub. We loved building this for {client?.businessName || 'you'}.</p>
+                </div>
+                {project.liveUrl && (
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="btn btn--primary btn--lg">
+                    View Live Site
+                  </a>
+                )}
+                {project.latestUpdate && (
+                  <div className="flow-update" style={{ marginTop: '16px' }}>
+                    <p>{project.latestUpdate}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Active but not yet complete (deploying) */}
+            {project.status === 'Active' && (
+              <div className="flow-card">
+                <h3>Deploying Your Project</h3>
+                <p>Payment received — we are now deploying your project. Your live URL will appear here shortly.</p>
+                {project.latestUpdate && (
+                  <div className="flow-update">
+                    <p>{project.latestUpdate}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </>
         )}
 
         {/* Project Updates Timeline */}
