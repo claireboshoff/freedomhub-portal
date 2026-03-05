@@ -4,10 +4,25 @@ function getToken() {
   const params = new URLSearchParams(window.location.search);
   const token = params.get('token');
   if (token) {
+    localStorage.setItem('portal_token', token);
     sessionStorage.setItem('portal_token', token);
+    // Clean token from URL for security
+    const url = new URL(window.location);
+    url.searchParams.delete('token');
+    window.history.replaceState({}, '', url.pathname + url.hash);
     return token;
   }
-  return sessionStorage.getItem('portal_token');
+  return localStorage.getItem('portal_token') || sessionStorage.getItem('portal_token');
+}
+
+function setToken(token) {
+  localStorage.setItem('portal_token', token);
+  sessionStorage.setItem('portal_token', token);
+}
+
+function clearToken() {
+  localStorage.removeItem('portal_token');
+  sessionStorage.removeItem('portal_token');
 }
 
 async function request(route, options = {}) {
@@ -16,24 +31,15 @@ async function request(route, options = {}) {
     throw new Error('NO_TOKEN');
   }
 
-  const { method = 'GET', body } = options;
+  const { body } = options;
   const params = new URLSearchParams({ token, route });
 
-  const fetchOptions = {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-  };
-
-  if (body && method === 'POST') {
-    fetchOptions.body = JSON.stringify(body);
-  } else if (body) {
-    Object.entries(body).forEach(([k, v]) => {
-      if (v !== undefined && v !== null) params.append(k, typeof v === 'object' ? JSON.stringify(v) : v);
-    });
+  if (body) {
+    params.append('payload', JSON.stringify(body));
   }
 
   const url = `${BASE_URL}?${params.toString()}`;
-  const res = await fetch(url, fetchOptions);
+  const res = await fetch(url);
   const data = await res.json();
 
   if (!res.ok) {
@@ -47,6 +53,8 @@ async function request(route, options = {}) {
 
 export const api = {
   getToken,
+  setToken,
+  clearToken,
 
   // Auth
   auth() {
@@ -87,6 +95,18 @@ export const api = {
   },
   submitProjectFeedback(projectId, feedback) {
     return request('project-feedback', { method: 'POST', body: { projectId, feedback } });
+  },
+  approveScope(projectId, addons, totalCost) {
+    return request('approve-scope', { method: 'POST', body: { projectId, addons, totalCost } });
+  },
+  amendScope(projectId, notes) {
+    return request('amend-scope', { method: 'POST', body: { projectId, notes } });
+  },
+  acceptContract(projectId, acceptedBy) {
+    return request('accept-contract', { method: 'POST', body: { projectId, acceptedBy } });
+  },
+  confirmPayment(projectId) {
+    return request('confirm-payment', { method: 'POST', body: { projectId } });
   },
 
   // Financial

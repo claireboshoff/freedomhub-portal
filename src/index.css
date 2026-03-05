@@ -61,6 +61,22 @@ a { color: var(--gold-dark); text-decoration: none; }
 .auth-card p { color: var(--gray-600); margin-bottom: 8px; font-size: 0.9375rem; }
 .text-muted { color: var(--gray-400) !important; font-size: 0.8125rem !important; }
 
+/* Sign In Form */
+.signin-card { max-width: 440px; }
+.signin-subtitle { color: var(--gray-500); margin-bottom: 24px !important; }
+.signin-error { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; border-radius: 8px; padding: 10px 14px; font-size: 0.875rem; margin-bottom: 20px; }
+.signin-form { text-align: left; margin-top: 8px; }
+.signin-label { display: block; font-size: 0.8125rem; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+.signin-input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 0.9375rem; font-family: var(--font-body); transition: border-color 0.2s; box-sizing: border-box; }
+.signin-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(191, 163, 100, 0.15); }
+.signin-input::placeholder { color: var(--gray-400); }
+.signin-btn { width: 100%; margin-top: 16px; padding: 12px; background: var(--gold); color: var(--white); border: none; border-radius: 8px; font-size: 0.9375rem; font-weight: 600; font-family: var(--font-body); cursor: pointer; transition: background 0.2s, transform 0.1s; }
+.signin-btn:hover:not(:disabled) { background: var(--gold-dark); transform: translateY(-1px); }
+.signin-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.signin-help { margin-top: 24px !important; font-size: 0.8125rem !important; color: var(--gray-400) !important; }
+.signin-help a { color: var(--gold); text-decoration: none; }
+.signin-help a:hover { text-decoration: underline; }
+
 /* ===========================
    Spinner & Animations
    =========================== */
@@ -130,6 +146,9 @@ a { color: var(--gold-dark); text-decoration: none; }
 .success-banner { background: var(--green-light); color: #065f46; padding: 12px 20px; border-radius: var(--radius-sm); font-weight: 500; margin-bottom: 20px; animation: fadeIn 0.3s ease; }
 .empty-state { color: var(--gray-400); text-align: center; padding: 24px 0; font-size: 0.9375rem; }
 .empty-state-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200); padding: 48px 24px; text-align: center; color: var(--gray-500); }
+.upsell-card { padding: 8px 0; }
+.upsell-card p { margin: 0 0 10px; font-size: 0.875rem; color: var(--gray-600); line-height: 1.5; }
+.upsell-card p strong { color: var(--charcoal); }
 
 /* ===========================
    Nudge Card (Dashboard)
@@ -471,6 +490,8 @@ a { color: var(--gold-dark); text-decoration: none; }
 /* ===========================
    Client Brain
    =========================== */
+.brain-intro { margin-bottom: 20px; padding: 16px 20px; background: var(--gray-50); border-left: 3px solid var(--gold); border-radius: 6px; }
+.brain-intro p { font-size: 0.875rem; color: var(--gray-600); line-height: 1.6; margin: 0; }
 .brain-completion { margin-bottom: 24px; }
 .brain-completion__bar { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
 .brain-completion__bar .progress-bar { flex: 1; }
@@ -671,4 +692,141 @@ a { color: var(--gold-dark); text-decoration: none; }
   .agreement-party__divider { display: none; }
   .agreement-signature { padding: 20px 16px; }
   .agreement-sign-form__signature { font-size: 1.375rem; }
+}
+
+/* ===========================
+   Proposal / Add-ons
+   =========================== */
+.addons-section { margin: 24px 0; }
+.addons-section h4 { font-size: 1rem; color: var(--charcoal); margin-bottom: 4px; }
+.addons-hint { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
+
+.addons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+.addon-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--white);
+}
+
+.addon-item:hover { border-color: var(--gold); }
+.addon-item--selected { border-color: var(--gold); background: rgba(197, 165, 90, 0.06); }
+
+.addon-item input[type="checkbox"] {
+  width: 18px; height: 18px; accent-color: var(--gold);
+  flex-shrink: 0;
+}
+
+.addon-item__info { display: flex; flex-direction: column; gap: 2px; }
+.addon-item__info strong { font-size: 0.875rem; color: var(--charcoal); }
+.addon-item__price { font-size: 0.8rem; color: var(--gold-dark); font-weight: 600; }
+
+.addons-summary {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: var(--bg-cream);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.addons-note { color: var(--text-muted); font-size: 0.8rem; }
+
+/* ===========================
+   Contract Accept
+   =========================== */
+.contract-item {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.contract-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contract-accept {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--bg-cream);
+  border-radius: 8px;
+}
+
+.contract-accept__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.contract-accept__check input[type="checkbox"] {
+  margin-top: 3px;
+  width: 18px; height: 18px;
+  accent-color: var(--gold);
+  flex-shrink: 0;
+}
+
+.contract-accept__name { margin-bottom: 16px; }
+.contract-accept__name .form-label { font-size: 0.85rem; margin-bottom: 4px; }
+.contract-accept__name .form-input { max-width: 360px; }
+
+/* ===========================
+   Payment Section
+   =========================== */
+.invoice-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 8px 0;
+}
+
+.invoice-item__info { flex: 1; }
+.invoice-item__info strong { display: block; font-size: 0.9rem; }
+.invoice-item__type { font-size: 0.8rem; color: var(--text-muted); }
+.invoice-item__amount { font-size: 1.1rem; font-weight: 700; color: var(--charcoal); }
+
+.payment-methods {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--bg-cream);
+  border-radius: 8px;
+}
+
+.payment-methods h4 { font-size: 0.9rem; margin-bottom: 12px; }
+
+.payment-method {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.payment-method:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.payment-method strong { font-size: 0.85rem; color: var(--gold-dark); }
+.payment-method p { font-size: 0.85rem; margin: 2px 0; color: var(--text-body); }
+.payment-ref { font-family: monospace; font-size: 0.8rem; color: var(--text-muted); }
+.payment-note { font-size: 0.8rem; color: var(--text-muted); margin-top: 12px; }
+
+.flow-update-text { color: var(--text-muted); font-style: italic; margin-top: 8px; }
+
+@media (max-width: 768px) {
+  .addons-grid { grid-template-columns: 1fr; }
+  .invoice-item { flex-wrap: wrap; }
 }

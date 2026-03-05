@@ -1,226 +1,200 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Doughnut } from 'react-chartjs-2';
 import { api } from '../lib/api';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-const statusColors = {
-  Draft: '#94a3b8',
-  Drafted: '#94a3b8',
-  'Pending Approval': '#f59e0b',
-  Pending: '#f59e0b',
-  Approved: '#10b981',
-  Scheduled: '#6366f1',
-  Published: '#C5A55A',
-};
-
-export default function Dashboard() {
+export default function Dashboard({ client, portalAccess }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [campaigns, setCampaigns] = useState([]);
-  const [content, setContent] = useState([]);
-  const [analytics, setAnalytics] = useState([]);
-  const [sentinel, setSentinel] = useState([]);
-  const [approvalCount, setApprovalCount] = useState(0);
+  const [projects, setProjects] = useState([]);
+  const [invoices, setInvoices] = useState([]);
+  const [tickets, setTickets] = useState([]);
+  const [maintenance, setMaintenance] = useState([]);
 
   useEffect(() => {
     Promise.all([
-      api.getCampaigns().catch(() => ({ campaigns: [] })),
-      api.getContent().catch(() => ({ content: [] })),
-      api.getAnalytics().catch(() => ({ analytics: [] })),
-      api.getSentinel().catch(() => ({ intel: [] })),
-      api.getApprovals().catch(() => ({ approvals: [] })),
-    ])
-      .then(([campData, contentData, analyticsData, sentinelData, approvalData]) => {
-        setCampaigns(campData.campaigns || []);
-        setContent(contentData.content || []);
-        setAnalytics(analyticsData.analytics || []);
-        setSentinel(sentinelData.intel || []);
-        setApprovalCount((approvalData.approvals || []).length);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError('Failed to load dashboard data');
-        setLoading(false);
-      });
+      api.getProjects().catch(() => ({ projects: [] })),
+      api.getInvoices().catch(() => ({ invoices: [] })),
+      api.getTickets().catch(() => ({ tickets: [] })),
+      api.getMaintenanceLog().catch(() => ({ log: [] })),
+    ]).then(([projData, invData, tickData, maintData]) => {
+      setProjects(projData.projects || []);
+      setInvoices(invData.invoices || []);
+      setTickets(tickData.tickets || []);
+      setMaintenance(maintData.log || []);
+      setLoading(false);
+    });
   }, []);
 
   if (loading) {
     return (
       <div className="page-loading">
         <div className="spinner" />
-        <p>Loading dashboard...</p>
+        <p>Loading your dashboard...</p>
       </div>
     );
   }
 
-  if (error) {
-    return <div className="error-message">{error}</div>;
-  }
-
-  // Compute content status counts
-  const statusCounts = {};
-  content.forEach((item) => {
-    const s = item.status || 'Unknown';
-    statusCounts[s] = (statusCounts[s] || 0) + 1;
-  });
-
-  const statusLabels = Object.keys(statusCounts);
-  const statusValues = Object.values(statusCounts);
-  const statusBgColors = statusLabels.map((s) => statusColors[s] || '#cbd5e1');
-
-  const doughnutData = {
-    labels: statusLabels,
-    datasets: [
-      {
-        data: statusValues,
-        backgroundColor: statusBgColors,
-        borderWidth: 0,
-        hoverOffset: 4,
-      },
-    ],
-  };
-
-  const doughnutOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'bottom',
-        labels: { padding: 16, usePointStyle: true, font: { family: 'Inter', size: 12 } },
-      },
-    },
-  };
-
-  // Compute key metrics
-  const totalImpressions = analytics.reduce((sum, a) => sum + (a.impressions || 0), 0);
-  const totalEngagement = analytics.reduce((sum, a) => sum + (a.engagement || 0), 0);
-  const avgEngagementRate =
-    analytics.length > 0
-      ? (analytics.reduce((sum, a) => sum + (a.engagementRate || 0), 0) / analytics.length).toFixed(2)
-      : '0';
-
-  // Top platform
-  const platformImpressions = {};
-  analytics.forEach((a) => {
-    if (a.platform) {
-      platformImpressions[a.platform] = (platformImpressions[a.platform] || 0) + (a.impressions || 0);
-    }
-  });
-  const topPlatform =
-    Object.keys(platformImpressions).length > 0
-      ? Object.entries(platformImpressions).sort((a, b) => b[1] - a[1])[0][0]
-      : 'N/A';
-
-  // Active campaigns
-  const activeCampaigns = campaigns.filter(
-    (c) => c.status === 'Active' || c.status === 'In Progress' || c.status === 'Running'
-  );
-
-  // Recent sentinel items (top 3 high priority)
-  const highPrioritySentinel = sentinel
-    .filter((s) => s.priority === 'High' || s.priority === 'Critical' || s.priority === 'Urgent')
-    .slice(0, 3);
+  const activeProjects = projects.filter((p) => p.status === 'Active' || p.status === 'Awaiting Approval');
+  const pendingInvoices = invoices.filter((i) => i.status === 'Pending' || i.status === 'Sent' || i.status === 'Overdue');
+  const openTickets = tickets.filter((t) => t.status === 'Open' || t.status === 'In Progress');
+  const profileComplete = client?.mission && client?.brandColors && client?.usp;
+  const recentMaintenance = maintenance.slice(0, 3);
 
   return (
     <div className="dashboard">
       <div className="page-header">
-        <h2>Dashboard</h2>
-        <p className="page-subtitle">Welcome back. Here is an overview of your marketing activity.</p>
+        <h2>Welcome back{client?.name ? `, ${client.name.split(' ')[0]}` : ''}.</h2>
+        <p className="page-subtitle">Here is everything happening across your account.</p>
       </div>
+
+      {/* Profile completion nudge */}
+      {!profileComplete && (
+        <div className="nudge-card" onClick={() => navigate('/profile')}>
+          <div className="nudge-card__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+          </div>
+          <div>
+            <strong>Complete your profile</strong>
+            <p>Your Client Brain powers everything we build. The more we know, the better we deliver.</p>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      )}
 
       {/* Metric Cards */}
       <div className="metrics-grid">
-        <div className="metric-card">
-          <div className="metric-card__label">Active Campaigns</div>
-          <div className="metric-card__value">{activeCampaigns.length}</div>
-          <div className="metric-card__sub">{campaigns.length} total</div>
+        <div className="metric-card metric-card--clickable" onClick={() => navigate('/projects')}>
+          <div className="metric-card__label">Active Projects</div>
+          <div className="metric-card__value">{activeProjects.length}</div>
+          <div className="metric-card__sub">{projects.length} total</div>
         </div>
-        <div className="metric-card">
-          <div className="metric-card__label">Total Impressions</div>
-          <div className="metric-card__value">{totalImpressions.toLocaleString()}</div>
+        <div className="metric-card metric-card--clickable" onClick={() => navigate('/financial')}>
+          <div className="metric-card__label">Pending Invoices</div>
+          <div className="metric-card__value">{pendingInvoices.length}</div>
+          {pendingInvoices.length > 0 && (
+            <div className="metric-card__sub metric-card__sub--warn">Action needed</div>
+          )}
         </div>
-        <div className="metric-card">
-          <div className="metric-card__label">Avg Engagement Rate</div>
-          <div className="metric-card__value">{avgEngagementRate}%</div>
+        <div className="metric-card metric-card--clickable" onClick={() => navigate('/help')}>
+          <div className="metric-card__label">Open Tickets</div>
+          <div className="metric-card__value">{openTickets.length}</div>
         </div>
-        <div className="metric-card">
-          <div className="metric-card__label">Top Platform</div>
-          <div className="metric-card__value metric-card__value--text">{topPlatform}</div>
+        <div className="metric-card metric-card--clickable" onClick={() => navigate('/services')}>
+          <div className="metric-card__label">Services</div>
+          <div className="metric-card__value metric-card__value--text">Browse</div>
+          <div className="metric-card__sub">Start a new project</div>
         </div>
       </div>
 
       <div className="dashboard-grid">
-        {/* Content Status Chart */}
+        {/* Active Projects */}
         <div className="card">
           <div className="card__header">
-            <h3>Content Status</h3>
-            <span className="card__badge">{content.length} items</span>
+            <h3>Active Projects</h3>
+            <button className="btn btn--ghost btn--sm" onClick={() => navigate('/projects')}>View All</button>
           </div>
           <div className="card__body">
-            {content.length > 0 ? (
-              <div className="chart-container chart-container--doughnut">
-                <Doughnut data={doughnutData} options={doughnutOptions} />
-              </div>
-            ) : (
-              <p className="empty-state">No content items yet</p>
-            )}
-          </div>
-        </div>
-
-        {/* Pending Approvals */}
-        <div className="card">
-          <div className="card__header">
-            <h3>Pending Approvals</h3>
-            {approvalCount > 0 && <span className="card__badge card__badge--warning">{approvalCount}</span>}
-          </div>
-          <div className="card__body">
-            {approvalCount > 0 ? (
-              <>
-                <p className="card__text">
-                  You have <strong>{approvalCount}</strong> content item{approvalCount !== 1 ? 's' : ''} waiting for
-                  your review.
-                </p>
-                <button className="btn btn--primary" onClick={() => navigate('/calendar')}>
-                  View Pending Approvals
-                </button>
-              </>
-            ) : (
-              <p className="empty-state">All caught up -- no pending approvals.</p>
-            )}
-          </div>
-        </div>
-
-        {/* Sentinel Intel */}
-        <div className="card card--full">
-          <div className="card__header">
-            <h3>Sentinel Intel Highlights</h3>
-          </div>
-          <div className="card__body">
-            {highPrioritySentinel.length > 0 ? (
-              <div className="intel-list">
-                {highPrioritySentinel.map((item) => (
-                  <div key={item.id} className="intel-item">
-                    <div className="intel-item__header">
-                      <span className={`intel-badge intel-badge--${(item.priority || '').toLowerCase()}`}>
-                        {item.priority}
-                      </span>
-                      <span className="intel-item__category">{item.category}</span>
-                      <span className="intel-item__date">{item.date}</span>
+            {activeProjects.length > 0 ? (
+              <div className="dash-list">
+                {activeProjects.slice(0, 4).map((p) => (
+                  <div key={p.id} className="dash-item" onClick={() => navigate(`/projects/${p.id}`)}>
+                    <div className="dash-item__info">
+                      <strong>{p.name}</strong>
+                      <span className="dash-item__meta">{p.serviceType} &mdash; {p.currentPhase}</span>
                     </div>
-                    <h4 className="intel-item__title">{item.title}</h4>
-                    <p className="intel-item__summary">{item.summary}</p>
+                    <div className="dash-item__progress">
+                      <div className="progress-bar progress-bar--sm">
+                        <div className="progress-bar__fill" style={{ width: `${p.buildProgress || 0}%` }} />
+                      </div>
+                      <span>{p.buildProgress || 0}%</span>
+                    </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="empty-state">No high-priority intel at this time.</p>
+              <div className="empty-state">
+                <p>No active projects. <button className="link-button" onClick={() => navigate('/services')}>Start one</button></p>
+              </div>
             )}
           </div>
         </div>
+
+        {/* Pending Actions */}
+        <div className="card">
+          <div className="card__header">
+            <h3>Needs Your Attention</h3>
+          </div>
+          <div className="card__body">
+            {pendingInvoices.length === 0 && projects.filter((p) => p.status === 'Awaiting Approval').length === 0 && projects.filter((p) => p.status === 'Awaiting Contract').length === 0 ? (
+              <p className="empty-state">All caught up. Nothing requires your action right now.</p>
+            ) : (
+              <div className="dash-list">
+                {projects.filter((p) => p.status === 'Awaiting Contract').map((p) => (
+                  <div key={`c-${p.id}`} className="dash-item dash-item--warn" onClick={() => navigate(`/projects/${p.id}`)}>
+                    <span className="dash-item__badge dash-item__badge--orange">Contract</span>
+                    <span>{p.name} &mdash; awaiting your signature</span>
+                  </div>
+                ))}
+                {pendingInvoices.map((inv) => (
+                  <div key={`i-${inv.id}`} className="dash-item dash-item--warn" onClick={() => navigate('/financial')}>
+                    <span className={`dash-item__badge ${inv.status === 'Overdue' ? 'dash-item__badge--red' : 'dash-item__badge--yellow'}`}>
+                      {inv.status === 'Overdue' ? 'Overdue' : 'Invoice'}
+                    </span>
+                    <span>{inv.invoiceNumber} &mdash; R{inv.amount?.toLocaleString()}</span>
+                  </div>
+                ))}
+                {projects.filter((p) => p.status === 'Awaiting Approval').map((p) => (
+                  <div key={`a-${p.id}`} className="dash-item dash-item--info" onClick={() => navigate(`/projects/${p.id}`)}>
+                    <span className="dash-item__badge dash-item__badge--blue">Review</span>
+                    <span>{p.name} &mdash; ready for your review</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Maintenance Log — maintenance plan clients only */}
+        {portalAccess?.maintenancePlan === 'Active' ? (
+          <div className="card card--full">
+            <div className="card__header">
+              <h3>Behind the Scenes</h3>
+              <span className="card__badge">{maintenance.length} updates</span>
+            </div>
+            <div className="card__body">
+              {recentMaintenance.length > 0 ? (
+                <div className="dash-list">
+                  {recentMaintenance.map((m) => (
+                    <div key={m.id} className="dash-item">
+                      <span className={`maint-badge maint-badge--${(m.type || 'other').toLowerCase().replace(/\s+/g, '-')}`}>
+                        {m.type}
+                      </span>
+                      <div className="dash-item__info">
+                        <span>{m.description}</span>
+                        <span className="dash-item__meta">{m.date} {m.timeSpent && `(${m.timeSpent})`}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="empty-state">Maintenance activity will appear here as we work on your systems.</p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="card card--full">
+            <div className="card__header">
+              <h3>Monthly Maintenance</h3>
+            </div>
+            <div className="card__body">
+              <div className="upsell-card">
+                <p><strong>See what happens behind the scenes.</strong></p>
+                <p>Security updates, backups, performance tuning — all logged transparently. Available on maintenance plans from R500/month.</p>
+                <button className="btn btn--primary btn--sm" onClick={() => navigate('/help')}>Learn More</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

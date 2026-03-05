@@ -2,15 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { api } from './lib/api';
 import Layout from './components/Layout';
+import Welcome from './components/Welcome';
 import Dashboard from './components/Dashboard';
-import Calendar from './components/Calendar';
-import Analytics from './components/Analytics';
-import Reports from './components/Reports';
+import ClientBrain from './components/ClientBrain';
+import Services from './components/Services';
+import ProjectHub from './components/ProjectHub';
+import ProjectFlow from './components/ProjectFlow';
+import Financial from './components/Financial';
+import HelpDesk from './components/HelpDesk';
+import ReviewModal from './components/ReviewModal';
+import SignIn from './components/SignIn';
 
 function App() {
   const [client, setClient] = useState(null);
+  const [portalAccess, setPortalAccess] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showReview, setShowReview] = useState(null);
 
   useEffect(() => {
     const token = api.getToken();
@@ -24,6 +33,18 @@ function App() {
       .auth()
       .then((data) => {
         setClient(data.client);
+        setPortalAccess({
+          portalActive: data.portalActive,
+          portalExpiry: data.portalExpiry,
+          maintenancePlan: data.maintenancePlan,
+        });
+        if (!sessionStorage.getItem('portal_welcomed')) {
+          setShowWelcome(true);
+        }
+        // Check for completed projects needing review
+        if (data.pendingReview) {
+          setShowReview(data.pendingReview);
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -36,6 +57,42 @@ function App() {
       });
   }, []);
 
+  const handleWelcomeComplete = () => {
+    sessionStorage.setItem('portal_welcomed', '1');
+    setShowWelcome(false);
+  };
+
+  const handleSignIn = (token) => {
+    api.setToken(token);
+    setError(null);
+    setLoading(true);
+    api.auth()
+      .then((data) => {
+        setClient(data.client);
+        setPortalAccess({
+          portalActive: data.portalActive,
+          portalExpiry: data.portalExpiry,
+          maintenancePlan: data.maintenancePlan,
+        });
+        if (!sessionStorage.getItem('portal_welcomed')) {
+          setShowWelcome(true);
+        }
+        if (data.pendingReview) {
+          setShowReview(data.pendingReview);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        api.clearToken();
+        if (err.status === 401) {
+          setError('INVALID_TOKEN');
+        } else {
+          setError('AUTH_FAILED');
+        }
+        setLoading(false);
+      });
+  };
+
   if (loading) {
     return (
       <div className="auth-screen">
@@ -47,30 +104,10 @@ function App() {
     );
   }
 
-  if (error === 'NO_TOKEN') {
-    return (
-      <div className="auth-screen">
-        <div className="auth-card">
-          <div className="auth-logo">FreedomHub</div>
-          <h2>Client Portal</h2>
-          <p>Please use the link provided by your account manager to access your portal.</p>
-          <p className="text-muted">No access token found in the URL.</p>
-        </div>
-      </div>
-    );
+  if (error === 'NO_TOKEN' || error === 'INVALID_TOKEN') {
+    return <SignIn error={error} onSignIn={handleSignIn} />;
   }
 
-  if (error === 'INVALID_TOKEN') {
-    return (
-      <div className="auth-screen">
-        <div className="auth-card">
-          <div className="auth-logo">FreedomHub</div>
-          <h2>Access Denied</h2>
-          <p>Your access token is invalid or has expired. Please contact your account manager for a new link.</p>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -85,15 +122,22 @@ function App() {
   }
 
   return (
-    <Layout client={client}>
-      <Routes>
-        <Route path="/" element={<Dashboard client={client} />} />
-        <Route path="/calendar" element={<Calendar client={client} />} />
-        <Route path="/analytics" element={<Analytics client={client} />} />
-        <Route path="/reports" element={<Reports client={client} />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Layout>
+    <>
+      {showWelcome && <Welcome client={client} onComplete={handleWelcomeComplete} />}
+      {showReview && <ReviewModal project={showReview} onClose={() => setShowReview(null)} />}
+      <Layout client={client}>
+        <Routes>
+          <Route path="/" element={<Dashboard client={client} portalAccess={portalAccess} />} />
+          <Route path="/profile" element={<ClientBrain client={client} onUpdate={setClient} />} />
+          <Route path="/services" element={<Services client={client} />} />
+          <Route path="/projects" element={<ProjectHub client={client} />} />
+          <Route path="/projects/:projectId" element={<ProjectFlow client={client} />} />
+          <Route path="/financial" element={<Financial client={client} />} />
+          <Route path="/help" element={<HelpDesk client={client} portalAccess={portalAccess} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Layout>
+    </>
   );
 }
 
