@@ -35,10 +35,31 @@ export default function Dashboard({ client, portalAccess }) {
   }
 
   const activeProjects = projects.filter((p) => p.status === 'Active' || p.status === 'Awaiting Approval');
+  const completedProjects = projects.filter((p) => p.status === 'Complete');
   const pendingInvoices = invoices.filter((i) => i.status === 'Pending' || i.status === 'Sent' || i.status === 'Overdue');
   const openTickets = tickets.filter((t) => t.status === 'Open' || t.status === 'In Progress');
   const profileComplete = client?.mission && client?.brandColors && client?.usp;
   const recentMaintenance = maintenance.slice(0, 3);
+
+  // Smart upsell suggestions based on completed project types
+  const completedTypes = new Set(completedProjects.map((p) => p.serviceType));
+  const allTypes = new Set(projects.map((p) => p.serviceType));
+  const upsells = [];
+  if (completedTypes.has('Website Build') && !allTypes.has('SEO & Visibility')) {
+    upsells.push({ title: 'Get Found Online', desc: 'Your site is live — now let people find it. SEO drives organic traffic that pays for itself.', service: 'seo', cta: 'Explore SEO' });
+  }
+  if (completedTypes.has('Website Build') && !allTypes.has('Social Media Campaign')) {
+    upsells.push({ title: 'Drive Traffic with Social', desc: 'Your website is ready for visitors. A social campaign puts it in front of the right people.', service: 'social-campaign', cta: 'Explore Social' });
+  }
+  if (completedProjects.length > 0 && portalAccess?.maintenancePlan !== 'Active') {
+    upsells.push({ title: 'Protect Your Investment', desc: 'Security patches, backups, and performance monitoring. Keep everything running smoothly.', service: 'maintenance', cta: 'View Plans' });
+  }
+  if (completedTypes.has('Website Build') && !allTypes.has('App Building')) {
+    upsells.push({ title: 'Custom Systems & Tools', desc: 'Automate your operations with a database, portal, or internal tool built around how you work.', service: 'app', cta: 'Explore Apps' });
+  }
+  if (completedTypes.has('Logo Design') && !allTypes.has('Website Build')) {
+    upsells.push({ title: 'Bring Your Brand Online', desc: 'Your brand identity is ready. Now give it a home with a professional website.', service: 'website', cta: 'Explore Websites' });
+  }
 
   return (
     <div className="dashboard">
@@ -191,6 +212,49 @@ export default function Dashboard({ client, portalAccess }) {
                 <p><strong>See what happens behind the scenes.</strong></p>
                 <p>Security updates, backups, performance tuning — all logged transparently. Available on maintenance plans from R500/month.</p>
                 <button className="btn btn--primary btn--sm" onClick={() => navigate('/help')}>Learn More</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Smart Upsell Cards */}
+        {upsells.length > 0 && (
+          <div className="card card--full">
+            <div className="card__header">
+              <h3>Recommended for You</h3>
+            </div>
+            <div className="card__body">
+              <div className="upsell-grid">
+                {upsells.slice(0, 3).map((u, i) => (
+                  <div key={i} className="upsell-item" onClick={() => navigate('/services')}>
+                    <strong>{u.title}</strong>
+                    <p>{u.desc}</p>
+                    <span className="upsell-item__cta">{u.cta}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Completed Projects */}
+        {completedProjects.length > 0 && (
+          <div className="card card--full">
+            <div className="card__header">
+              <h3>Completed Projects</h3>
+            </div>
+            <div className="card__body">
+              <div className="dash-list">
+                {completedProjects.slice(0, 4).map((p) => (
+                  <div key={p.id} className="dash-item" onClick={() => navigate(`/projects/${p.id}`)}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                    <div className="dash-item__info">
+                      <strong>{p.name}</strong>
+                      <span className="dash-item__meta">{p.serviceType}</span>
+                    </div>
+                    {p.liveUrl && <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="btn btn--ghost btn--sm" onClick={(e) => e.stopPropagation()}>View Live</a>}
+                  </div>
+                ))}
               </div>
             </div>
           </div>

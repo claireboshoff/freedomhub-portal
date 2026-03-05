@@ -43,7 +43,7 @@ export default function ReviewModal({ project, onClose }) {
             )}
             <div style={{ marginTop: '24px', display: 'flex', gap: '12px', justifyContent: 'center' }}>
               {isHappy && (
-                <a href="https://g.page/r/YOUR_REVIEW_LINK/review" target="_blank" rel="noopener noreferrer" className="btn btn--primary">
+                <a href="https://g.page/r/freedomhub-io/review" target="_blank" rel="noopener noreferrer" className="btn btn--primary">
                   Leave a Google Review
                 </a>
               )}

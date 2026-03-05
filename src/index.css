@@ -149,6 +149,12 @@ a { color: var(--gold-dark); text-decoration: none; }
 .upsell-card { padding: 8px 0; }
 .upsell-card p { margin: 0 0 10px; font-size: 0.875rem; color: var(--gray-600); line-height: 1.5; }
 .upsell-card p strong { color: var(--charcoal); }
+.upsell-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.upsell-item { background: var(--cream); border-radius: 10px; padding: 20px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid transparent; }
+.upsell-item:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--gold-light); }
+.upsell-item strong { display: block; margin-bottom: 6px; color: var(--charcoal); }
+.upsell-item p { font-size: 0.8125rem; color: var(--gray-600); line-height: 1.5; margin: 0 0 12px; }
+.upsell-item__cta { font-size: 0.8125rem; font-weight: 600; color: var(--gold); }
 
 /* ===========================
    Nudge Card (Dashboard)
