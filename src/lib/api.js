@@ -138,29 +138,4 @@ export const api = {
     return request('review', { method: 'POST', body: { projectId, ...reviewData } });
   },
 
-  // Legacy (marketing portal)
-  getCampaigns() {
-    return request('campaigns');
-  },
-  getContent() {
-    return request('content');
-  },
-  getAnalytics() {
-    return request('analytics');
-  },
-  getApprovals() {
-    return request('approvals');
-  },
-  getReports() {
-    return request('reports');
-  },
-  getSentinel() {
-    return request('sentinel');
-  },
-  approveContent(recordId, table = 'approvals') {
-    return request('approve', { body: { recordId, action: 'approve', table } });
-  },
-  reviseContent(recordId, notes, table = 'approvals') {
-    return request('approve', { body: { recordId, action: 'revise', notes, table } });
-  },
 };
