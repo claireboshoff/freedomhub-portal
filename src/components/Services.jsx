@@ -208,6 +208,51 @@ const SERVICE_TYPES = [
     ],
   },
   {
+    id: 'app',
+    title: 'App Building',
+    tagline: 'Custom systems built for your business.',
+    description: 'Databases, automations, dashboards, portals, and bespoke tools — built around how you work.',
+    icon: 'smartphone',
+    color: '#0ea5e9',
+    steps: [
+      {
+        title: 'What Do You Need Built?',
+        fields: [
+          { name: 'appName', label: 'Project name (or working title)', type: 'text', required: true },
+          { name: 'appType', label: 'Type of system', type: 'select', required: true, options: ['Database & Backend System', 'Client Portal / Dashboard', 'Internal Business Tool', 'Booking / Scheduling System', 'Inventory / Stock Management', 'CRM / Client Management', 'Web App (browser-based)', 'Progressive Web App (mobile-friendly)', 'Workflow Automation System', 'Not sure — advise me'] },
+          { name: 'appDescription', label: 'What should the system do?', type: 'textarea', required: true, placeholder: 'Describe the core problem this needs to solve and how you want it to work...' },
+          { name: 'targetUsers', label: 'Who will use it?', type: 'textarea', required: true, placeholder: 'Your team, your clients, specific departments, the public?' },
+        ],
+      },
+      {
+        title: 'Features & Integrations',
+        fields: [
+          { name: 'coreFeatures', label: 'Must-have features', type: 'textarea', required: true, placeholder: 'List the essential features (e.g. user login, reporting, notifications, data entry, approvals...)' },
+          { name: 'niceToHave', label: 'Nice-to-have features', type: 'textarea', placeholder: 'Features you would love but could live without for launch...' },
+          { name: 'integrations', label: 'Integrations needed', type: 'multicheck', options: ['Payment gateway (Stripe/PayFast)', 'Email/SMS notifications', 'WhatsApp messaging', 'Google Workspace (Sheets, Calendar, Drive)', 'Airtable / Database', 'Accounting (Xero, Sage, QuickBooks)', 'Calendar/Booking', 'File uploads & storage', 'Reporting & analytics', 'Other'] },
+          { name: 'existingSystem', label: 'Replacing an existing system?', type: 'select', options: ['No — brand new build', 'Yes — replacing spreadsheets/manual processes', 'Yes — replacing an existing app/tool', 'Adding onto an existing system'] },
+          { name: 'dataNeeds', label: 'What data does the system need to manage?', type: 'textarea', placeholder: 'e.g. Client records, orders, stock levels, appointments, invoices, reports...' },
+        ],
+      },
+      {
+        title: 'Package & Timeline',
+        fields: [
+          { name: 'package', label: 'Choose a package', type: 'select', required: true, options: [
+            'Lite System (database + basic UI) — from R15,000',
+            'Standard System (full features + integrations) — from R30,000',
+            'Advanced System (complex logic, admin panel, automations) — from R50,000',
+            'Ongoing Development (monthly retainer) — from R8,000/month',
+            'Not sure — advise me'
+          ]},
+          { name: 'timeline', label: 'When do you need this?', type: 'select', required: true, options: ['ASAP (2-4 weeks)', 'Within 1-2 months', 'Within 3 months', 'No rush — quality over speed', 'Just exploring the idea'] },
+          { name: 'budget', label: 'Budget range', type: 'select', options: ['Under R15,000', 'R15,000 – R30,000', 'R30,000 – R50,000', 'R50,000+', 'Flexible — depends on scope'] },
+          { name: 'references', label: 'Tools or systems you admire', type: 'textarea', placeholder: 'Share names, URLs, or describe tools similar to what you want...' },
+          { name: 'additionalNotes', label: 'Anything else we should know?', type: 'textarea', placeholder: 'Current pain points, team size, deadline drivers, must-haves...' },
+        ],
+      },
+    ],
+  },
+  {
     id: 'logo',
     title: 'Logo Design',
     tagline: 'Your brand, distilled.',
@@ -270,6 +315,11 @@ const serviceIcons = {
   zap: (
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+  ),
+  smartphone: (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" />
     </svg>
   ),
   'pen-tool': (
