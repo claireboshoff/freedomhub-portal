@@ -141,4 +141,30 @@ export const api = {
     return request('review', { method: 'POST', body: { projectId, ...reviewData } });
   },
 
+  // Admin
+  adminDashboard() {
+    return request('admin-dashboard');
+  },
+  adminClients() {
+    return request('admin-clients');
+  },
+  adminProjects() {
+    return request('admin-projects');
+  },
+  adminInvoices() {
+    return request('admin-invoices');
+  },
+  adminTickets() {
+    return request('admin-tickets');
+  },
+  adminTicketReply(ticketId, reply) {
+    return request('admin-ticket-reply', { body: { ticketId, reply } });
+  },
+  adminUpdateProject(projectId, updates) {
+    return request('admin-update-project', { body: { projectId, ...updates } });
+  },
+  adminUpdateInvoice(invoiceId) {
+    return request('admin-update-invoice', { body: { invoiceId } });
+  },
+
 };

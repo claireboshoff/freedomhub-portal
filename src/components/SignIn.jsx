@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logo from '../assets/logo.png';
 
 function SignIn({ error, onSignIn }) {
   const [token, setToken] = useState('');
@@ -14,7 +15,7 @@ function SignIn({ error, onSignIn }) {
   return (
     <div className="auth-screen">
       <div className="auth-card signin-card">
-        <div className="auth-logo">FreedomHub</div>
+        <img src={logo} alt="FreedomHub" className="signin-logo-img" />
         <h2>Client Portal</h2>
         <p className="signin-subtitle">
           Sign in using the access code from your welcome email, or click the link we sent you.

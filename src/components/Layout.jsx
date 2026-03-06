@@ -1,11 +1,28 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
-const navItems = [
+const clientNavItems = [
   { to: '/', label: 'Dashboard', icon: 'grid' },
   { to: '/profile', label: 'My Profile', icon: 'brain' },
   { to: '/services', label: 'Services', icon: 'briefcase' },
   { to: '/projects', label: 'Projects', icon: 'folder' },
+  { to: '/financial', label: 'Financial', icon: 'wallet' },
+  { to: '/help', label: 'Help Desk', icon: 'help' },
+];
+
+const adminNavItems = [
+  { to: '/', label: 'Command Center', icon: 'grid' },
+  { to: '/admin/clients', label: 'Clients', icon: 'users' },
+  { to: '/admin/projects', label: 'Projects', icon: 'folder' },
+  { to: '/admin/invoices', label: 'Invoices', icon: 'wallet' },
+  { to: '/admin/tickets', label: 'Tickets', icon: 'help' },
+];
+
+const clientQuickLinks = [
+  { to: '/profile', label: 'My Profile', icon: 'brain' },
+  { to: '/services', label: 'Services', icon: 'briefcase' },
+  { to: '/projects', label: 'My Projects', icon: 'folder' },
   { to: '/financial', label: 'Financial', icon: 'wallet' },
   { to: '/help', label: 'Help Desk', icon: 'help' },
 ];
@@ -47,6 +64,14 @@ const icons = {
       <line x1="12" y1="17" x2="12.01" y2="17" />
     </svg>
   ),
+  users: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  ),
   menu: (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" />
@@ -60,8 +85,10 @@ const icons = {
   ),
 };
 
-export default function Layout({ client, children }) {
+export default function Layout({ client, isAdmin, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const primaryNav = isAdmin ? adminNavItems : clientNavItems;
 
   return (
     <div className="layout">
@@ -70,7 +97,7 @@ export default function Layout({ client, children }) {
       <aside className={`sidebar ${sidebarOpen ? 'sidebar--open' : ''}`}>
         <div className="sidebar__header">
           <div className="sidebar__brand">
-            <span className="sidebar__logo">FH</span>
+            <img src={logo} alt="FreedomHub" className="sidebar__logo-img" />
             <span className="sidebar__brand-text">FreedomHub</span>
           </div>
           <button className="sidebar__close" onClick={() => setSidebarOpen(false)}>
@@ -79,7 +106,8 @@ export default function Layout({ client, children }) {
         </div>
 
         <nav className="sidebar__nav">
-          {navItems.map((item) => (
+          {isAdmin && <div className="sidebar__section-label">Admin</div>}
+          {primaryNav.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -91,6 +119,23 @@ export default function Layout({ client, children }) {
               <span>{item.label}</span>
             </NavLink>
           ))}
+
+          {isAdmin && (
+            <>
+              <div className="sidebar__section-label">My Portal</div>
+              {clientQuickLinks.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) => `sidebar__link ${isActive ? 'sidebar__link--active' : ''}`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  {icons[item.icon]}
+                  <span>{item.label}</span>
+                </NavLink>
+              ))}
+            </>
+          )}
         </nav>
 
         <div className="sidebar__footer">
@@ -112,7 +157,7 @@ export default function Layout({ client, children }) {
             {icons.menu}
           </button>
           <div className="topbar__title">
-            <h1>Client Portal</h1>
+            <h1>{isAdmin ? 'Command Center' : 'Client Portal'}</h1>
           </div>
           <div className="topbar__right">
             <span className="topbar__client">{client?.businessName || client?.company || client?.name}</span>

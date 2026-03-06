@@ -62,6 +62,7 @@ a { color: var(--gold-dark); text-decoration: none; }
 .text-muted { color: var(--gray-400) !important; font-size: 0.8125rem !important; }
 
 /* Sign In Form */
+.signin-logo-img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 12px; }
 .signin-card { max-width: 440px; }
 .signin-subtitle { color: var(--gray-500); margin-bottom: 24px !important; }
 .signin-error { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; border-radius: 8px; padding: 10px 14px; font-size: 0.875rem; margin-bottom: 20px; }
@@ -94,6 +95,7 @@ a { color: var(--gold-dark); text-decoration: none; }
 .sidebar__header { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
 .sidebar__brand { display: flex; align-items: center; gap: 10px; }
 .sidebar__logo { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: var(--gold); color: var(--charcoal); font-family: var(--font-heading); font-weight: 700; font-size: 0.875rem; border-radius: 8px; }
+.sidebar__logo-img { width: 40px; height: 40px; object-fit: contain; }
 .sidebar__brand-text { font-family: var(--font-heading); font-weight: 600; font-size: 1.125rem; }
 .sidebar__close { display: none; background: none; border: none; color: var(--gray-400); cursor: pointer; padding: 4px; }
 .sidebar__nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
@@ -101,6 +103,7 @@ a { color: var(--gold-dark); text-decoration: none; }
 .sidebar__link:hover { color: var(--white); background: rgba(255,255,255,0.06); }
 .sidebar__link--active { color: var(--white); background: rgba(197,165,90,0.15); }
 .sidebar__link--active svg { color: var(--gold); }
+.sidebar__section-label { font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); padding: 16px 20px 6px; }
 .sidebar__footer { padding: 16px 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
 .sidebar__client { display: flex; align-items: center; gap: 10px; }
 .sidebar__avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--gold); color: var(--charcoal); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem; flex-shrink: 0; }
@@ -840,4 +843,695 @@ a { color: var(--gold-dark); text-decoration: none; }
 @media (max-width: 768px) {
   .addons-grid { grid-template-columns: 1fr; }
   .invoice-item { flex-wrap: wrap; }
+}
+
+/* ===========================
+   Admin Command Center
+   =========================== */
+
+/* Admin Metrics Grid */
+.admin-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.admin-metric-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.admin-metric-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--gold);
+}
+
+.admin-metric-card--compact {
+  cursor: default;
+}
+
+.admin-metric-card--compact:hover {
+  box-shadow: var(--shadow-sm);
+  border-color: var(--gray-200);
+}
+
+.admin-metric-card__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500);
+  margin-bottom: 8px;
+}
+
+.admin-metric-card__value {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--charcoal);
+  line-height: 1;
+}
+
+.admin-metric-card__value--warn {
+  color: var(--amber);
+}
+
+.admin-metric-card__value--green {
+  color: var(--green);
+}
+
+.admin-metric-card__sub {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  margin-top: 4px;
+}
+
+.admin-metric-card__sub--warn {
+  color: var(--amber);
+  font-weight: 600;
+}
+
+/* Admin Dashboard Grid */
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Admin Status Breakdown */
+.admin-status-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.admin-status-row:last-child {
+  border-bottom: none;
+}
+
+.admin-status-count {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--charcoal);
+}
+
+/* Admin Activity Feed */
+.admin-activity-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-activity-item {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: 0.875rem;
+}
+
+.admin-activity-item:last-child {
+  border-bottom: none;
+}
+
+.admin-activity-date {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  white-space: nowrap;
+  min-width: 48px;
+  padding-top: 2px;
+}
+
+.admin-activity-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-activity-info strong {
+  font-size: 0.875rem;
+}
+
+.admin-activity-project {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+}
+
+/* Admin Quick Actions */
+.admin-quick-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Admin Search Bar */
+.admin-search-bar {
+  margin-bottom: 20px;
+  max-width: 480px;
+}
+
+/* Admin Table/Cards responsive toggle */
+.admin-table-view {
+  display: block;
+}
+
+.admin-cards-view {
+  display: none;
+}
+
+/* Admin Clickable Row */
+.admin-clickable-row {
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.admin-clickable-row:hover {
+  background: rgba(197, 165, 90, 0.06) !important;
+}
+
+/* Admin Email Cell */
+.admin-email-cell {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Admin Plan Badge */
+.admin-plan-badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 10px;
+  border-radius: 20px;
+  background: var(--green-light);
+  color: #065f46;
+  white-space: nowrap;
+}
+
+.admin-plan-badge--none {
+  background: var(--gray-100);
+  color: var(--gray-500);
+}
+
+/* Admin Client Card (Mobile) */
+.admin-client-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.admin-client-card:hover {
+  border-color: var(--gold);
+  box-shadow: var(--shadow);
+}
+
+.admin-client-card__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.admin-client-card__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--charcoal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.admin-client-card__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-client-card__info strong {
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-client-card__info span {
+  font-size: 0.8125rem;
+  color: var(--gray-500);
+}
+
+.admin-client-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--gray-100);
+}
+
+.admin-client-card__email {
+  font-size: 0.8125rem;
+  color: var(--gray-500);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Admin Filter Count */
+.admin-filter-count {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: var(--gray-200);
+  color: var(--gray-600);
+  padding: 0 6px;
+  border-radius: 8px;
+  margin-left: 4px;
+}
+
+.filter-pill--active .admin-filter-count {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+}
+
+/* Admin Projects List */
+.admin-projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-project-item {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: border-color var(--transition);
+}
+
+.admin-project-item--expanded {
+  border-color: var(--gold);
+}
+
+.admin-project-item__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  text-align: left;
+}
+
+.admin-project-item__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-project-item__main strong {
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-project-item__client {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+}
+
+.admin-project-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.admin-project-item__progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  min-width: 100px;
+}
+
+.admin-project-item__pct {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  min-width: 30px;
+}
+
+.admin-project-item__chevron {
+  flex-shrink: 0;
+  color: var(--gray-400);
+}
+
+/* Admin Project Detail Panel */
+.admin-project-detail {
+  padding: 0 16px 16px;
+  animation: slideUp 0.2s ease;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.admin-project-detail__info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.admin-detail-label {
+  font-weight: 600;
+  color: var(--gray-500);
+  font-size: 0.8125rem;
+}
+
+.admin-project-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-range-input {
+  width: 100%;
+  accent-color: var(--gold);
+  cursor: pointer;
+  height: 6px;
+}
+
+/* Admin Tickets List */
+.admin-tickets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-ticket-item {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: border-color var(--transition);
+}
+
+.admin-ticket-item--expanded {
+  border-color: var(--gold);
+}
+
+.admin-ticket-item__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  text-align: left;
+}
+
+.admin-ticket-item__main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-ticket-item__main h4 {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-ticket-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.admin-ticket-item__client-name {
+  font-size: 0.8125rem;
+  color: var(--gray-500);
+  font-weight: 500;
+}
+
+.admin-ticket-item__date {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+}
+
+.admin-ticket-item__chevron {
+  flex-shrink: 0;
+  color: var(--gray-400);
+}
+
+/* Admin Ticket Body */
+.admin-ticket-body {
+  padding: 0 16px 16px;
+  animation: slideUp 0.2s ease;
+}
+
+/* Admin Reply Form */
+.admin-reply-form {
+  margin-top: 12px;
+}
+
+.admin-reply-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* Admin Invoice Card (Mobile) */
+.admin-invoice-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+}
+
+.admin-invoice-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.admin-invoice-card__top strong {
+  font-size: 0.9375rem;
+}
+
+.admin-invoice-card__client {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+
+.admin-invoice-card__bottom {
+  padding-top: 8px;
+  border-top: 1px solid var(--gray-100);
+}
+
+.admin-invoice-card__amount {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 6px;
+}
+
+.admin-invoice-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-invoice-card__date {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+}
+
+/* Admin Client Detail */
+.admin-client-info-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-client-info-card__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--charcoal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.admin-client-info-card__details h2 {
+  font-size: 1.375rem;
+  margin-bottom: 4px;
+}
+
+.admin-client-info-card__business {
+  font-size: 0.9375rem;
+  color: var(--gray-600);
+  margin-bottom: 8px;
+}
+
+.admin-client-info-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+  color: var(--gray-500);
+}
+
+/* Admin Detail Grid */
+.admin-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* ===========================
+   Admin Responsive
+   =========================== */
+@media (max-width: 1024px) {
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-project-detail {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-metric-card__value {
+    font-size: 1.375rem;
+  }
+
+  .admin-table-view {
+    display: none;
+  }
+
+  .admin-cards-view {
+    display: block;
+  }
+
+  .admin-project-item__header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-project-item__meta {
+    order: 3;
+    width: 100%;
+  }
+
+  .admin-project-item__progress-wrap {
+    order: 4;
+    width: 100%;
+  }
+
+  .admin-ticket-item__header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-ticket-item__meta {
+    order: 3;
+    width: 100%;
+  }
+
+  .admin-client-info-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .admin-client-info-card__meta {
+    justify-content: center;
+  }
+
+  .admin-quick-actions {
+    flex-direction: column;
+  }
+
+  .admin-quick-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-metrics {
+    grid-template-columns: 1fr;
+  }
 }
