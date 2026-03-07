@@ -7,7 +7,7 @@ function formatRand(amount) {
 }
 
 export default function AdminClientDetail() {
-  const { id } = useParams();
+  const { clientId: id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [client, setClient] = useState(null);

@@ -160,6 +160,15 @@ export const api = {
   leaderboard(courseId) {
     return request('leaderboard', { body: { courseId } });
   },
+  lessonDetail(lessonId) {
+    return request('lesson-detail', { body: { lessonId } });
+  },
+  markComplete(lessonId) {
+    return request('mark-complete', { body: { lessonId } });
+  },
+  submitReflection(lessonId, response) {
+    return request('submit-reflection', { body: { lessonId, response } });
+  },
 
   // Admin
   adminDashboard() {
