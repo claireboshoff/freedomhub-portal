@@ -32,6 +32,9 @@ const AdminTickets = lazy(() => import('./components/AdminTickets'));
 const AdminClientDetail = lazy(() => import('./components/AdminClientDetail'));
 const AdminCoaching = lazy(() => import('./components/AdminCoaching'));
 const AdminCoachingDetail = lazy(() => import('./components/AdminCoachingDetail'));
+const AdminCourses = lazy(() => import('./components/AdminCourses'));
+const CourseBuilder = lazy(() => import('./components/CourseBuilder'));
+const CourseAnalytics = lazy(() => import('./components/CourseAnalytics'));
 
 function App() {
   const [client, setClient] = useState(null);
@@ -165,6 +168,10 @@ function App() {
               <Route path="/admin/projects" element={<Suspense fallback={adminFallback}><AdminProjects /></Suspense>} />
               <Route path="/admin/invoices" element={<Suspense fallback={adminFallback}><AdminInvoices /></Suspense>} />
               <Route path="/admin/tickets" element={<Suspense fallback={adminFallback}><AdminTickets /></Suspense>} />
+              <Route path="/admin/courses" element={<Suspense fallback={adminFallback}><AdminCourses /></Suspense>} />
+              <Route path="/admin/courses/new" element={<Suspense fallback={adminFallback}><CourseBuilder /></Suspense>} />
+              <Route path="/admin/courses/:courseId" element={<Suspense fallback={adminFallback}><CourseBuilder /></Suspense>} />
+              <Route path="/admin/courses/:courseId/analytics" element={<Suspense fallback={adminFallback}><CourseAnalytics /></Suspense>} />
               <Route path="/admin/coaching" element={<Suspense fallback={adminFallback}><AdminCoaching /></Suspense>} />
               <Route path="/admin/coaching/:coachingClientId" element={<Suspense fallback={adminFallback}><AdminCoachingDetail /></Suspense>} />
             </>

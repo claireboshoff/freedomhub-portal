@@ -240,4 +240,48 @@ export const api = {
     return request('update-coaching-profile', { body: { clientId, ...profileData } });
   },
 
+  // Admin Courses
+  adminCourses() {
+    return request('admin-courses');
+  },
+  adminToggleCourseStatus(courseId, status) {
+    return request('admin-toggle-course', { body: { courseId, status } });
+  },
+  adminCourseDetail(courseId) {
+    return request('admin-course-detail', { body: { courseId } });
+  },
+  adminCreateCourse(courseData) {
+    return request('admin-create-course', { body: courseData });
+  },
+  adminUpdateCourse(courseId, courseData) {
+    return request('admin-update-course', { body: { courseId, ...courseData } });
+  },
+  adminCreateModule(courseId, moduleData) {
+    return request('admin-create-module', { body: { courseId, ...moduleData } });
+  },
+  adminUpdateModule(moduleId, moduleData) {
+    return request('admin-update-module', { body: { moduleId, ...moduleData } });
+  },
+  adminCreateLesson(moduleId, lessonData) {
+    return request('admin-create-lesson', { body: { moduleId, ...lessonData } });
+  },
+  adminUpdateLesson(lessonId, lessonData) {
+    return request('admin-update-lesson', { body: { lessonId, ...lessonData } });
+  },
+  adminCreateQuiz(lessonId, quizData) {
+    return request('admin-create-quiz', { body: { lessonId, ...quizData } });
+  },
+  adminUpdateQuiz(quizId, quizData) {
+    return request('admin-update-quiz', { body: { quizId, ...quizData } });
+  },
+  adminDeleteModule(moduleId) {
+    return request('admin-delete-module', { body: { moduleId } });
+  },
+  adminDeleteLesson(lessonId) {
+    return request('admin-delete-lesson', { body: { lessonId } });
+  },
+  adminCourseAnalytics(courseId) {
+    return request('admin-course-analytics', { body: { courseId } });
+  },
+
 };

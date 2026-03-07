@@ -18,6 +18,7 @@ const adminNavItems = [
   { to: '/admin/projects', label: 'Projects', icon: 'folder' },
   { to: '/admin/invoices', label: 'Invoices', icon: 'wallet' },
   { to: '/admin/tickets', label: 'Tickets', icon: 'help' },
+  { to: '/admin/courses', label: 'Courses', icon: 'academy' },
   { to: '/admin/coaching', label: 'Coaching', icon: 'heart' },
 ];
 
