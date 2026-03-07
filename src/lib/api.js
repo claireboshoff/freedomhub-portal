@@ -286,6 +286,9 @@ export const api = {
   adminCourseAnalytics(courseId) {
     return request('admin-course-analytics', { body: { courseId } });
   },
+  adminEnrollClient(courseId, clientId) {
+    return request('admin-enroll-client', { body: { courseId, clientId } });
+  },
 
   // LMS Progress
   myLearningProgress() {

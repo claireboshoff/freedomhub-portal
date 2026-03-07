@@ -669,10 +669,19 @@ export default function CourseDetail() {
       ]);
       setCourse(courseRes.course);
 
-      const myEnrollment = enrollmentsRes?.enrollments?.find(
-        (e) => e.courseId === courseRes.course.id || e.courseSlug === courseRes.course.slug
-      );
-      setEnrollment(myEnrollment || null);
+      // Use enrollment from course-detail if available, otherwise check myEnrollments
+      if (courseRes.enrollment) {
+        // Merge with full enrollment data from myEnrollments for completedLessons
+        const fullEnrollment = enrollmentsRes?.enrollments?.find(
+          (e) => e.courseId === courseRes.course.id || e.courseSlug === courseRes.course.slug
+        );
+        setEnrollment(fullEnrollment || courseRes.enrollment);
+      } else {
+        const myEnrollment = enrollmentsRes?.enrollments?.find(
+          (e) => e.courseId === courseRes.course.id || e.courseSlug === courseRes.course.slug
+        );
+        setEnrollment(myEnrollment || null);
+      }
 
       // Expand first module by default
       if (courseRes.course.modules?.length > 0) {
@@ -836,15 +845,11 @@ export default function CourseDetail() {
           <div className="cd__actions">
             {status === 'not-enrolled' && (
               <button
-                className="cd__btn cd__btn--primary"
+                className="cd__btn cd__btn--outline"
                 onClick={handleEnroll}
                 disabled={enrolling}
               >
-                {enrolling
-                  ? 'Enrolling...'
-                  : course.price && course.price > 0
-                    ? `Enroll — R${course.price}`
-                    : 'Start Learning'}
+                {enrolling ? 'Requesting...' : 'Request Access'}
               </button>
             )}
             {status === 'enrolled' && (
@@ -888,6 +893,18 @@ export default function CourseDetail() {
           </div>
         </div>
       </div>
+
+      {/* Not Enrolled Banner */}
+      {status === 'not-enrolled' && (
+        <div className="cd__progress" style={{ background: '#faf9f6', border: '1px solid #e8d5a3' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <LockIcon />
+            <span style={{ fontSize: '0.9rem', color: '#555' }}>
+              You are not enrolled in this course. Lessons are locked. Request access or contact your admin to be enrolled.
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Progress Bar */}
       {completionRate != null && status !== 'not-enrolled' && (
@@ -937,12 +954,13 @@ export default function CourseDetail() {
                         {sortedLessons.map((lesson) => {
                           const completed = isLessonCompleted(lesson.id);
                           const locked = isLessonLocked(lesson);
+                          const notEnrolled = !enrollment;
                           const canNavigate = enrollment && !locked;
 
                           return (
                             <div
                               key={lesson.id}
-                              className={`cd__lesson${completed ? ' cd__lesson--completed' : ''}${locked ? ' cd__lesson--locked' : ''}${canNavigate ? ' cd__lesson--clickable' : ''}`}
+                              className={`cd__lesson${completed ? ' cd__lesson--completed' : ''}${(locked || notEnrolled) ? ' cd__lesson--locked' : ''}${canNavigate ? ' cd__lesson--clickable' : ''}`}
                               onClick={() => {
                                 if (canNavigate) navigate(`/learn/${slug}/lesson/${lesson.id}`);
                               }}
@@ -966,7 +984,7 @@ export default function CourseDetail() {
                               )}
                               <span className="cd__lesson-status">
                                 {completed && <CheckIcon />}
-                                {locked && <LockIcon />}
+                                {(locked || notEnrolled) && <LockIcon />}
                               </span>
                             </div>
                           );

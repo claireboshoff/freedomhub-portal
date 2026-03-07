@@ -2,6 +2,89 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 
+function EnrollClientModal({ course, onClose, onSuccess }) {
+  const [clients, setClients] = useState([]);
+  const [loadingClients, setLoadingClients] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [enrolling, setEnrolling] = useState(null);
+  const [feedback, setFeedback] = useState(null);
+
+  useEffect(() => {
+    api.adminClients()
+      .then(data => setClients(data.clients || []))
+      .catch(() => setFeedback({ type: 'error', text: 'Failed to load clients' }))
+      .finally(() => setLoadingClients(false));
+  }, []);
+
+  const filtered = clients.filter(c => {
+    if (!searchTerm.trim()) return true;
+    const q = searchTerm.toLowerCase();
+    return (c.name || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q);
+  });
+
+  async function handleEnroll(clientId) {
+    setEnrolling(clientId);
+    setFeedback(null);
+    try {
+      await api.adminEnrollClient(course.id, clientId);
+      setFeedback({ type: 'success', text: 'Client enrolled successfully!' });
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      const msg = err.message || 'Failed to enroll client';
+      setFeedback({ type: 'error', text: msg.includes('Already enrolled') ? 'Client is already enrolled in this course.' : msg });
+    } finally {
+      setEnrolling(null);
+    }
+  }
+
+  return (
+    <div className="ac__modal-overlay" onClick={onClose}>
+      <div className="ac__modal" onClick={e => e.stopPropagation()}>
+        <div className="ac__modal-header">
+          <h3>Enroll Client</h3>
+          <button className="ac__modal-close" onClick={onClose}>&times;</button>
+        </div>
+        <p className="ac__modal-course-title">Course: <strong>{course.title}</strong></p>
+        {feedback && (
+          <div className={`ac__modal-feedback ac__modal-feedback--${feedback.type}`}>
+            {feedback.text}
+          </div>
+        )}
+        <input
+          type="text"
+          className="ac__search ac__modal-search"
+          placeholder="Search clients by name or email..."
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+        />
+        <div className="ac__modal-client-list">
+          {loadingClients ? (
+            <div className="ac__modal-loading">Loading clients...</div>
+          ) : filtered.length === 0 ? (
+            <div className="ac__modal-loading">No clients found</div>
+          ) : (
+            filtered.map(cl => (
+              <div key={cl.id} className="ac__modal-client-row">
+                <div className="ac__modal-client-info">
+                  <span className="ac__modal-client-name">{cl.name}</span>
+                  <span className="ac__modal-client-email">{cl.email}</span>
+                </div>
+                <button
+                  className="ac__btn ac__btn--primary ac__btn--sm"
+                  disabled={enrolling === cl.id}
+                  onClick={() => handleEnroll(cl.id)}
+                >
+                  {enrolling === cl.id ? '...' : 'Enroll'}
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminCourses() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
@@ -10,6 +93,7 @@ export default function AdminCourses() {
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [togglingId, setTogglingId] = useState(null);
+  const [enrollModal, setEnrollModal] = useState(null);
 
   useEffect(() => {
     loadCourses();
@@ -223,6 +307,12 @@ export default function AdminCourses() {
                     Analytics
                   </button>
                   <button
+                    className="ac__btn ac__btn--ghost ac__btn--sm"
+                    onClick={() => setEnrollModal(course)}
+                  >
+                    Enroll Client
+                  </button>
+                  <button
                     className="ac__btn ac__btn--outline ac__btn--sm"
                     disabled={togglingId === course.id}
                     onClick={(e) => handleToggleStatus(e, course)}
@@ -238,6 +328,14 @@ export default function AdminCourses() {
             </div>
           ))}
         </div>
+      )}
+
+      {enrollModal && (
+        <EnrollClientModal
+          course={enrollModal}
+          onClose={() => setEnrollModal(null)}
+          onSuccess={loadCourses}
+        />
       )}
     </div>
   );
@@ -549,6 +647,119 @@ const acStyles = `
   .ac__skeleton-line--wide { width: 70%; }
   .ac__skeleton-line--med { width: 50%; }
   .ac__skeleton-line--short { width: 30%; }
+
+  /* Modal */
+  .ac__modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .ac__modal {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    width: 480px;
+    max-width: 90vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .ac__modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+  }
+  .ac__modal-header h3 {
+    font-family: 'League Spartan', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: #2d2d2d;
+  }
+  .ac__modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+    line-height: 1;
+    padding: 0 4px;
+  }
+  .ac__modal-close:hover {
+    color: #2d2d2d;
+  }
+  .ac__modal-course-title {
+    padding: 12px 20px 0;
+    font-size: 14px;
+    color: #555;
+    margin: 0;
+  }
+  .ac__modal-feedback {
+    margin: 12px 20px 0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .ac__modal-feedback--success {
+    background: #e6f4ea;
+    color: #1e7e34;
+  }
+  .ac__modal-feedback--error {
+    background: #fdecea;
+    color: #c0392b;
+  }
+  .ac__modal-search {
+    margin: 12px 20px 0;
+    width: calc(100% - 40px);
+  }
+  .ac__modal-client-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ac__modal-loading {
+    text-align: center;
+    padding: 24px 0;
+    color: #888;
+    font-size: 14px;
+  }
+  .ac__modal-client-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+  }
+  .ac__modal-client-row:hover {
+    border-color: #c5a55a;
+  }
+  .ac__modal-client-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .ac__modal-client-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2d2d2d;
+  }
+  .ac__modal-client-email {
+    font-size: 12px;
+    color: #888;
+  }
 
   @media (max-width: 640px) {
     .ac__card {

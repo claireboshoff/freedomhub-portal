@@ -156,11 +156,18 @@ export default function Academy() {
   const level = progress?.level || 1;
   const badges = progress?.badges || [];
   const lastActive = progress?.lastActive || null;
-  const featuredCourses = courses.filter((c) => c.featured);
   const enrollmentMap = {};
   enrollments.forEach((e) => {
     enrollmentMap[e.courseId] = e;
   });
+  // Enrolled course IDs from enrollments data
+  const enrolledCourseIds = new Set(enrollments.map(e => e.courseId));
+  // Also use the enrolled flag from courses-published
+  courses.forEach(c => { if (c.enrolled) enrolledCourseIds.add(c.id); });
+  // Courses the client is NOT enrolled in
+  const availableCourses = courses.filter(c => !enrolledCourseIds.has(c.id));
+  const featuredAvailable = availableCourses.filter(c => c.featured);
+  const featuredCourses = featuredAvailable.length > 0 ? featuredAvailable : availableCourses.slice(0, 4);
 
   return (
     <div className="academy-page">
@@ -449,10 +456,10 @@ export default function Academy() {
         </div>
       )}
 
-      {/* Featured Courses */}
+      {/* Browse Available Courses */}
       <div className="academy-section">
         <div className="academy-section__header">
-          <h3>Featured Courses</h3>
+          <h3>Browse Available Courses</h3>
           <button
             className="btn btn--ghost btn--sm"
             onClick={() => navigate('/learn/browse')}
@@ -471,9 +478,13 @@ export default function Academy() {
               />
             ))}
           </div>
+        ) : enrollments.length > 0 ? (
+          <div className="empty-state">
+            <p>You are enrolled in all available courses. Check back soon for new content.</p>
+          </div>
         ) : (
           <div className="empty-state">
-            <p>No featured courses yet. Check back soon.</p>
+            <p>No courses available yet. Check back soon.</p>
           </div>
         )}
       </div>
