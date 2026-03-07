@@ -193,6 +193,15 @@ export const api = {
   likeDiscussion(discussionId) {
     return request('like-discussion', { body: { discussionId } });
   },
+  courseLiveSessions(courseId) {
+    return request('course-live-sessions', { body: { courseId } });
+  },
+  upcomingSessions() {
+    return request('upcoming-sessions');
+  },
+  coachingRecommendations() {
+    return request('coaching-recommendations');
+  },
 
   // Admin
   adminDashboard() {

@@ -315,13 +315,22 @@ export default function CourseDetail() {
               </button>
             )}
             {status !== 'not-enrolled' && (
-              <button
-                className="btn btn--ghost"
-                onClick={() => navigate(`/learn/${slug}/community`)}
-                style={{ color: 'var(--gold, #c5a55a)', fontWeight: 600 }}
-              >
-                Community
-              </button>
+              <>
+                <button
+                  className="btn btn--ghost"
+                  onClick={() => navigate(`/learn/${slug}/community`)}
+                  style={{ color: 'var(--gold, #c5a55a)', fontWeight: 600 }}
+                >
+                  Community
+                </button>
+                <button
+                  className="btn btn--ghost"
+                  onClick={() => navigate(`/learn/${slug}/live`)}
+                  style={{ color: 'var(--gold, #c5a55a)', fontWeight: 600 }}
+                >
+                  Live Sessions
+                </button>
+              </>
             )}
           </div>
         </div>
