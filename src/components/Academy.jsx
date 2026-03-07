@@ -161,6 +161,17 @@ export default function Academy() {
           <div className="metric-card__value">{level}</div>
           <div className="metric-card__sub">keep going</div>
         </div>
+        <div className="metric-card" onClick={() => navigate('/learn/certificates')} style={{ cursor: 'pointer' }}>
+          <div className="metric-card__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C5A55A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="8" r="6" />
+              <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
+            </svg>
+          </div>
+          <div className="metric-card__label">My Certificates</div>
+          <div className="metric-card__value" style={{ fontSize: '14px', color: 'var(--gold)' }}>View All</div>
+          <div className="metric-card__sub">earned awards</div>
+        </div>
       </div>
 
       {/* Continue Learning */}

@@ -169,6 +169,18 @@ export const api = {
   submitReflection(lessonId, response) {
     return request('submit-reflection', { body: { lessonId, response } });
   },
+  quizData(lessonId) {
+    return request('quiz-data', { body: { lessonId } });
+  },
+  submitQuiz(lessonId, answers, score) {
+    return request('submit-quiz', { body: { lessonId, answers, score } });
+  },
+  myCertificates() {
+    return request('my-certificates');
+  },
+  certificateDetail(certificateId) {
+    return request('certificate-detail', { body: { certificateId } });
+  },
 
   // Admin
   adminDashboard() {

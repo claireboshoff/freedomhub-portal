@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../lib/api';
+import QuizSection from './QuizSection';
 
 /* ---- Content Type Icons (16x16 inline SVG, matches CourseDetail) ---- */
 const CONTENT_ICONS = {
@@ -263,6 +264,9 @@ export default function LessonPlayer() {
   const [reflectionXp, setReflectionXp] = useState(null);
   const reflectionTimerRef = useRef(null);
 
+  // Quiz state
+  const [quizData, setQuizData] = useState(null);
+
   // Media state
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const videoRef = useRef(null);
@@ -283,6 +287,7 @@ export default function LessonPlayer() {
     setReflectionSubmitted(false);
     setReflectionXp(null);
     setPlaybackSpeed(1);
+    setQuizData(null);
     try {
       const res = await api.lessonDetail(lessonId);
       setLesson(res.lesson);
@@ -301,6 +306,18 @@ export default function LessonPlayer() {
       const currentLesson = (res.allLessons || []).find((l) => l.id === lessonId);
       if (currentLesson?.moduleId) {
         setExpandedModules((prev) => ({ ...prev, [currentLesson.moduleId]: true }));
+      }
+
+      // Load quiz data if quiz is enabled
+      if (res.lesson?.quizEnabled) {
+        try {
+          const qRes = await api.quizData(lessonId);
+          if (qRes && qRes.questions) {
+            setQuizData(qRes);
+          }
+        } catch (_quizErr) {
+          // Quiz data load failure is non-fatal
+        }
       }
     } catch (err) {
       setError(err.message || 'Failed to load lesson');
@@ -411,6 +428,20 @@ export default function LessonPlayer() {
   const handleSleepTimerEnd = useCallback(() => {
     if (audioRef.current) audioRef.current.pause();
   }, []);
+
+  /* ---- Quiz complete handler ---- */
+  async function handleQuizComplete({ score, passed, answers }) {
+    try {
+      await api.submitQuiz(lessonId, answers, score);
+    } catch (_err) {
+      // Submit failure is non-fatal — score is shown in UI regardless
+    }
+    if (passed) {
+      const xp = score === 100 ? 20 : 15;
+      setXpNotification({ visible: true, xp });
+      setTimeout(() => setXpNotification({ visible: false, xp: 0 }), 3000);
+    }
+  }
 
   /* ---- Navigation helpers ---- */
   function goToLesson(id) {
@@ -798,12 +829,13 @@ export default function LessonPlayer() {
           </div>
         )}
 
-        {/* ---- QUIZ PLACEHOLDER ---- */}
-        {lesson.quizEnabled && (
-          <div className="placeholder-card">
-            <h3>Quiz</h3>
-            <p>Quiz coming soon -- Sprint 10</p>
-          </div>
+        {/* ---- QUIZ ---- */}
+        {lesson.quizEnabled && quizData && (
+          <QuizSection
+            lessonId={lessonId}
+            quizData={quizData}
+            onQuizComplete={handleQuizComplete}
+          />
         )}
 
         {/* ---- DISCUSSION PLACEHOLDER ---- */}
