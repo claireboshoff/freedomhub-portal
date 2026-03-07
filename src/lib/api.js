@@ -202,6 +202,9 @@ export const api = {
   coachingRecommendations() {
     return request('coaching-recommendations');
   },
+  searchCourses(query, filters) {
+    return request('search-courses', { body: { query, ...filters } });
+  },
 
   // Admin
   adminDashboard() {
@@ -282,6 +285,14 @@ export const api = {
   },
   adminCourseAnalytics(courseId) {
     return request('admin-course-analytics', { body: { courseId } });
+  },
+
+  // LMS Progress
+  myLearningProgress() {
+    return request('my-learning-progress');
+  },
+  continueLearning() {
+    return request('continue-learning');
   },
 
 };

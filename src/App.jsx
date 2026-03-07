@@ -22,6 +22,8 @@ const MyCertificates = lazy(() => import('./components/MyCertificates'));
 const CertificateView = lazy(() => import('./components/CertificateView'));
 const CourseCommunity = lazy(() => import('./components/CourseCommunity'));
 const CourseLiveSessions = lazy(() => import('./components/CourseLiveSessions'));
+const MyProgress = lazy(() => import('./components/MyProgress'));
+const CourseSearch = lazy(() => import('./components/CourseSearch'));
 
 // Admin components (lazy loaded)
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
@@ -147,7 +149,9 @@ function App() {
           <Route path="/" element={isAdmin ? <Suspense fallback={adminFallback}><AdminDashboard /></Suspense> : <Dashboard client={client} portalAccess={portalAccess} />} />
           <Route path="/profile" element={<ClientBrain client={client} onUpdate={setClient} />} />
           <Route path="/learn" element={<Suspense fallback={adminFallback}><Academy client={client} /></Suspense>} />
+          <Route path="/learn/my-progress" element={<Suspense fallback={adminFallback}><MyProgress /></Suspense>} />
           <Route path="/learn/browse" element={<Suspense fallback={adminFallback}><CourseBrowse client={client} /></Suspense>} />
+          <Route path="/learn/search" element={<Suspense fallback={adminFallback}><CourseSearch /></Suspense>} />
           <Route path="/learn/:slug" element={<Suspense fallback={adminFallback}><CourseDetail client={client} /></Suspense>} />
           <Route path="/learn/certificates" element={<Suspense fallback={adminFallback}><MyCertificates client={client} /></Suspense>} />
           <Route path="/learn/certificate/:certId" element={<Suspense fallback={adminFallback}><CertificateView client={client} /></Suspense>} />

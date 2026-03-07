@@ -334,11 +334,25 @@ export default function Academy() {
         }
       `}</style>
 
-      <div className="page-header">
-        <h2>Academy</h2>
-        <p className="page-subtitle">
-          Learn, grow, and level up. Courses, quests, and challenges built for your journey.
-        </p>
+      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <div>
+          <h2>Academy</h2>
+          <p className="page-subtitle">
+            Learn, grow, and level up. Courses, quests, and challenges built for your journey.
+          </p>
+        </div>
+        <button
+          className="btn btn--outline btn--sm"
+          onClick={() => navigate('/learn/search')}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', flexShrink: 0, marginTop: '4px' }}
+          title="Search courses"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          Search
+        </button>
       </div>
 
       {/* Level Up Modal */}

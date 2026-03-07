@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
+import ContinueLearning from './ContinueLearning';
 
 export default function Dashboard({ client, portalAccess }) {
   const navigate = useNavigate();
@@ -106,6 +107,8 @@ export default function Dashboard({ client, portalAccess }) {
           <div className="metric-card__sub">Start a new project</div>
         </div>
       </div>
+
+      <ContinueLearning />
 
       <div className="dashboard-grid">
         {/* Active Projects */}

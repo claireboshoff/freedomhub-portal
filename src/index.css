@@ -2605,3 +2605,32 @@ a { color: var(--gold-dark); text-decoration: none; }
   color: var(--gray-300);
   line-height: 1.5;
 }
+
+/* ===========================
+   Mobile Optimization — Sprint 15
+   =========================== */
+@media (max-width: 768px) {
+  /* Sidebar width on tablet */
+  .sidebar { width: 280px; }
+
+  /* Content padding (merge with existing) */
+  .content { padding: 16px; }
+
+  /* Course cards — single column */
+  .course-grid { grid-template-columns: 1fr; }
+
+  /* Buttons — thumb-friendly tap targets */
+  .btn--primary, .btn--ghost { min-height: 44px; }
+
+  /* Tables — horizontal scroll */
+  table { display: block; overflow-x: auto; }
+
+  /* Page headers */
+  .page-header h2 { font-size: 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .content { padding: 12px; }
+  .topbar__client { display: none; }
+  .page-header h2 { font-size: 1.3rem; }
+}
