@@ -5,6 +5,7 @@ import logo from '../assets/logo.png';
 const clientNavItems = [
   { to: '/', label: 'Dashboard', icon: 'grid' },
   { to: '/profile', label: 'My Profile', icon: 'brain' },
+  { to: '/learn', label: 'Academy', icon: 'academy' },
   { to: '/services', label: 'Services', icon: 'briefcase' },
   { to: '/projects', label: 'Projects', icon: 'folder' },
   { to: '/financial', label: 'Financial', icon: 'wallet' },
@@ -17,10 +18,12 @@ const adminNavItems = [
   { to: '/admin/projects', label: 'Projects', icon: 'folder' },
   { to: '/admin/invoices', label: 'Invoices', icon: 'wallet' },
   { to: '/admin/tickets', label: 'Tickets', icon: 'help' },
+  { to: '/admin/coaching', label: 'Coaching', icon: 'heart' },
 ];
 
 const clientQuickLinks = [
   { to: '/profile', label: 'My Profile', icon: 'brain' },
+  { to: '/learn', label: 'Academy', icon: 'academy' },
   { to: '/services', label: 'Services', icon: 'briefcase' },
   { to: '/projects', label: 'My Projects', icon: 'folder' },
   { to: '/financial', label: 'Financial', icon: 'wallet' },
@@ -72,10 +75,21 @@ const icons = {
       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </svg>
   ),
+  heart: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  ),
   menu: (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" />
       <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+  ),
+  academy: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
     </svg>
   ),
   close: (

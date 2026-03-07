@@ -13,6 +13,11 @@ import HelpDesk from './components/HelpDesk';
 import ReviewModal from './components/ReviewModal';
 import SignIn from './components/SignIn';
 
+// Academy / Courses (lazy loaded)
+const Academy = lazy(() => import('./components/Academy'));
+const CourseBrowse = lazy(() => import('./components/CourseBrowse'));
+const CourseDetail = lazy(() => import('./components/CourseDetail'));
+
 // Admin components (lazy loaded)
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const AdminClients = lazy(() => import('./components/AdminClients'));
@@ -20,6 +25,8 @@ const AdminProjects = lazy(() => import('./components/AdminProjects'));
 const AdminInvoices = lazy(() => import('./components/AdminInvoices'));
 const AdminTickets = lazy(() => import('./components/AdminTickets'));
 const AdminClientDetail = lazy(() => import('./components/AdminClientDetail'));
+const AdminCoaching = lazy(() => import('./components/AdminCoaching'));
+const AdminCoachingDetail = lazy(() => import('./components/AdminCoachingDetail'));
 
 function App() {
   const [client, setClient] = useState(null);
@@ -131,6 +138,9 @@ function App() {
           {/* Client routes */}
           <Route path="/" element={isAdmin ? <Suspense fallback={adminFallback}><AdminDashboard /></Suspense> : <Dashboard client={client} portalAccess={portalAccess} />} />
           <Route path="/profile" element={<ClientBrain client={client} onUpdate={setClient} />} />
+          <Route path="/learn" element={<Suspense fallback={adminFallback}><Academy client={client} /></Suspense>} />
+          <Route path="/learn/browse" element={<Suspense fallback={adminFallback}><CourseBrowse client={client} /></Suspense>} />
+          <Route path="/learn/:slug" element={<Suspense fallback={adminFallback}><CourseDetail client={client} /></Suspense>} />
           <Route path="/services" element={<Services client={client} />} />
           <Route path="/projects" element={<ProjectHub client={client} />} />
           <Route path="/projects/:projectId" element={<ProjectFlow client={client} />} />
@@ -145,6 +155,8 @@ function App() {
               <Route path="/admin/projects" element={<Suspense fallback={adminFallback}><AdminProjects /></Suspense>} />
               <Route path="/admin/invoices" element={<Suspense fallback={adminFallback}><AdminInvoices /></Suspense>} />
               <Route path="/admin/tickets" element={<Suspense fallback={adminFallback}><AdminTickets /></Suspense>} />
+              <Route path="/admin/coaching" element={<Suspense fallback={adminFallback}><AdminCoaching /></Suspense>} />
+              <Route path="/admin/coaching/:coachingClientId" element={<Suspense fallback={adminFallback}><AdminCoachingDetail /></Suspense>} />
             </>
           )}
 

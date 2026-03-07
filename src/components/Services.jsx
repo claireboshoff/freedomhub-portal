@@ -1,15 +1,130 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import ServiceForm from './ServiceForm';
 
+/* ===========================
+   COACHING PACKAGES
+   =========================== */
+const COACHING_TYPES = [
+  {
+    id: 'life',
+    title: 'Life Coaching',
+    badge: 'Silver',
+    tagline: 'Identity. Mindset. Leadership.',
+    framework: 'BE',
+    frameworkDesc: 'Who are you becoming? This foundational layer addresses inner transformation — identity, mindset, beliefs, and leadership — before any external changes occur. The patterns in your life show up in your business. We start here.',
+    color: '#8a8a8a',
+    perSession: 950,
+    tiers: [
+      { sessions: 1, price: 'R950', label: 'Single Session', discount: null },
+      { sessions: 4, price: 'R3,600', label: '4 Sessions', discount: 'Save 5%' },
+      { sessions: 6, price: 'R5,100', label: '6 Sessions', discount: 'Save 10%' },
+      { sessions: 12, price: 'R9,600', label: '12 Sessions', discount: 'Save 15%' },
+    ],
+  },
+  {
+    id: 'business',
+    title: 'Business / AI Coaching',
+    badge: 'Gold',
+    tagline: 'Systems. Strategy. Smart growth.',
+    framework: 'BUILD + AUTOMATE',
+    frameworkDesc: 'Real capacity is not hired — it is engineered. We design the systems, processes, and frameworks your business needs, then layer in AI and automation to multiply your output. Strategy that changes trajectory, not just results.',
+    color: '#C5A55A',
+    perSession: 1300,
+    tiers: [
+      { sessions: 1, price: 'R1,300', label: 'Single Session', discount: null },
+      { sessions: 4, price: 'R4,900', label: '4 Sessions', discount: 'Save 5%' },
+      { sessions: 6, price: 'R7,000', label: '6 Sessions', discount: 'Save 10%' },
+      { sessions: 12, price: 'R13,200', label: '12 Sessions', discount: 'Save 15%' },
+    ],
+  },
+  {
+    id: 'holistic',
+    title: 'Holistic Coaching',
+    badge: 'Platinum',
+    tagline: 'The full spectrum. Life and business.',
+    framework: 'BE + BUILD + AUTOMATE',
+    frameworkDesc: 'All of it is connected. Most people try to automate before they know what they are building, and build before they know who they are becoming. This is the complete journey — identity, systems, and automation in one integrated coaching experience.',
+    color: '#2D2D2D',
+    perSession: 1150,
+    tiers: [
+      { sessions: 1, price: 'R1,150', label: 'Single Session', discount: null },
+      { sessions: 4, price: 'R4,300', label: '4 Sessions', discount: 'Save 5%' },
+      { sessions: 6, price: 'R6,200', label: '6 Sessions', discount: 'Save 10%' },
+      { sessions: 12, price: 'R11,700', label: '12 Sessions', discount: 'Save 15%' },
+    ],
+  },
+  {
+    id: 'advisory',
+    title: 'Advisory',
+    badge: null,
+    tagline: 'Premium. Limited to 10 slots.',
+    framework: 'BE + BUILD + AUTOMATE',
+    frameworkDesc: 'Work directly with Claire at the highest level. 10x your results in life, business, or both. This is not coaching — it is strategic partnership. Limited to 10 clients per advisory track. For leaders ready to move fast and think bigger.',
+    color: '#1a1a1a',
+    perSession: null,
+    isAdvisory: true,
+    tiers: [
+      { sessions: null, price: 'R150,000', label: 'Life Design Advisory', discount: '3 months' },
+      { sessions: null, price: 'R250,000', label: 'Life Design Advisory', discount: '6 months' },
+      { sessions: null, price: 'R150,000', label: 'Business Architect Advisory', discount: '3 months' },
+      { sessions: null, price: 'R250,000', label: 'Business Architect Advisory', discount: '6 months' },
+      { sessions: null, price: 'R300,000', label: 'Freedom Architect Advisory', discount: '6 months' },
+    ],
+  },
+  {
+    id: 'speaking',
+    title: 'Corporate & Speaking',
+    badge: null,
+    tagline: 'For businesses, events, and organisations.',
+    framework: 'BE + BUILD + AUTOMATE',
+    frameworkDesc: 'Claire brings the Be + Build + Automate framework into organisations, events, and corporate environments — as a facilitator, trainer, keynote speaker, or guest expert. Whether you are looking to transform a team, open a conference with impact, or energise a business forum, the work is the same: helping humans get unstuck and build something that works.',
+    color: '#1a1a1a',
+    perSession: null,
+    isSpeaking: true,
+    tiers: [
+      { sessions: null, price: 'Custom', label: 'Business Retreats & Corporate Training', discount: 'Full-day or half-day' },
+      { sessions: null, price: 'Custom', label: 'Keynote Speaking & Guest Appearances', discount: 'Conferences & forums' },
+    ],
+    speakingTopics: [
+      'The Be + Build + Automate Framework',
+      'AI Without the Fear',
+      'Burnout Is a Design Problem',
+      'Leadership & Identity Under Pressure',
+      'Building a Business That Doesn\'t Need You',
+      'Time, Money & Location Freedom',
+    ],
+    speakingVenues: 'Business forums & conferences, Women\'s events & ladies luncheons, Leadership retreats, Corporate training days, Guest expert panels, Online summits & webinars',
+  },
+];
+
+/* ===========================
+   DONE-FOR-YOU SERVICES
+   =========================== */
 const SERVICE_TYPES = [
   {
     id: 'website',
     title: 'Website Build',
     tagline: 'Your vision, expertly crafted.',
     description: 'We handle everything from strategy to launch. You just approve.',
+    frameworkTag: 'BUILD',
+    learnMore: 'A complete website project — research, strategy, copywriting, design, development, SEO, and deployment. We audit your current presence, design for conversion, and launch a site that works as hard as you do. Includes project management, revisions, and post-launch support.',
     icon: 'globe',
     color: '#C5A55A',
+    packages: [
+      { label: 'Starter (1-4 pages)', price: 'from R5,000' },
+      { label: 'Business (5-8 pages)', price: 'from R12,000' },
+      { label: 'Professional (8-15 pages + CMS)', price: 'from R25,000' },
+      { label: 'E-Commerce (full store)', price: 'from R25,000' },
+    ],
+    addons: [
+      { label: 'SEO Audit + Setup', price: 'from R7,000' },
+      { label: 'Monthly SEO Retainer', price: 'from R7,500/mo' },
+      { label: 'Local SEO (Google Business Profile)', price: 'from R5,000/mo' },
+      { label: 'GEO (AI Search Optimisation)', price: 'from R5,000/mo' },
+      { label: 'Blog Content (SEO-optimised)', price: 'from R1,500/article' },
+    ],
     steps: [
       {
         title: 'About Your Business',
@@ -49,6 +164,7 @@ const SERVICE_TYPES = [
             'E-Commerce (full store) — from R25,000',
             'Not sure — advise me'
           ]},
+          { name: 'seoAddons', label: 'SEO & Visibility add-ons', type: 'multicheck', options: ['SEO Audit + Setup — from R7,000', 'Monthly SEO Retainer — from R7,500/mo', 'Local SEO (Google Business Profile) — from R5,000/mo', 'GEO (AI Search Optimisation) — from R5,000/mo', 'Blog Content (SEO-optimised) — from R1,500/article', 'None needed right now'] },
           { name: 'timeline', label: 'When do you need this?', type: 'select', required: true, options: ['ASAP (1-2 weeks)', 'Within a month', '1-2 months', 'No rush — quality over speed'] },
           { name: 'additionalNotes', label: 'Anything else we should know?', type: 'textarea', placeholder: 'Special requirements, integrations, must-haves...' },
         ],
@@ -60,8 +176,14 @@ const SERVICE_TYPES = [
     title: 'Landing Page',
     tagline: 'Engineered for conversions.',
     description: 'Tell us your goal. We will build the machine that gets you there.',
+    frameworkTag: 'BUILD',
+    learnMore: 'High-converting landing pages built on research — audience analysis, pain point mapping, competitor review, and conversion psychology. Includes A/B testing setup, lead capture forms, email sequences, and analytics tracking. Every element is designed to convert.',
     icon: 'target',
-    color: '#6366f1',
+    color: '#C5A55A',
+    packages: [
+      { label: 'Single Landing Page', price: 'from R3,500' },
+      { label: 'Multi-variant + A/B Testing', price: 'from R8,000' },
+    ],
     steps: [
       {
         title: 'Your Offer',
@@ -100,8 +222,17 @@ const SERVICE_TYPES = [
     title: 'Social Media Campaign',
     tagline: 'Content that connects.',
     description: 'Multi-platform campaigns created, scheduled, and optimised. Hands-free.',
+    frameworkTag: 'BUILD + AUTOMATE',
+    learnMore: 'Full-service social media — content strategy, creation, scheduling, and management across all platforms. We handle everything from copy and visuals to hashtag strategy and paid ad management. Monthly reporting and optimisation included.',
     icon: 'share',
-    color: '#10b981',
+    color: '#2D2D2D',
+    packages: [
+      { label: 'Content Creation (12 posts/month)', price: 'from R4,000/mo' },
+      { label: 'Content Creation (20 posts/month)', price: 'from R7,000/mo' },
+      { label: 'Full Management (per platform)', price: 'from R3,500/mo' },
+      { label: 'Paid Ad Management (FB/IG)', price: 'from R5,000/mo' },
+      { label: 'Paid Ad Management (Google Ads)', price: 'from R5,600/mo' },
+    ],
     steps: [
       {
         title: 'Campaign Goals',
@@ -139,47 +270,21 @@ const SERVICE_TYPES = [
     ],
   },
   {
-    id: 'seo',
-    title: 'SEO & Visibility',
-    tagline: 'Be found where it matters.',
-    description: 'We optimise your presence for search engines, AI, and real humans.',
-    icon: 'search',
-    color: '#f59e0b',
-    steps: [
-      {
-        title: 'Current State',
-        fields: [
-          { name: 'websiteUrl', label: 'Website URL', type: 'text', required: true, placeholder: 'https://...' },
-          { name: 'currentSeo', label: 'Have you done SEO before?', type: 'select', required: true, options: ['Never', 'Some basics', 'Had a professional do it', 'Currently working with someone'] },
-          { name: 'googleProfile', label: 'Do you have a Google Business Profile?', type: 'select', options: ['Yes', 'No', 'Not sure'] },
-        ],
-      },
-      {
-        title: 'Goals',
-        fields: [
-          { name: 'targetKeywords', label: 'Keywords you want to rank for', type: 'textarea', required: true, placeholder: 'e.g. "life coach Cape Town", "business automation SA"' },
-          { name: 'targetLocation', label: 'Target location', type: 'text', required: true, placeholder: 'e.g. Cape Town, Johannesburg, South Africa, Global' },
-          { name: 'competitors', label: 'Main competitors', type: 'textarea', placeholder: 'URLs or names of competitors ranking for your keywords...' },
-          { name: 'package', label: 'Choose a package', type: 'select', required: true, options: [
-            'SEO Audit + Setup (once-off) — from R7,000',
-            'Monthly SEO Retainer — from R7,500/month',
-            'Local SEO (Google Business Profile) — from R5,000/month',
-            'GEO (AI Search Optimisation) — from R5,000/month',
-            'Blog Content (per article, SEO-optimised) — from R1,500/article',
-            'Not sure — advise me'
-          ]},
-          { name: 'additionalNotes', label: 'Specific concerns or goals?', type: 'textarea' },
-        ],
-      },
-    ],
-  },
-  {
     id: 'automation',
     title: 'AI & Automation',
     tagline: 'Systems that work while you sleep.',
     description: 'We build the automations that free up your time and scale your business.',
+    frameworkTag: 'AUTOMATE',
+    learnMore: 'Custom automation solutions — chatbots, WhatsApp integrations, email sequences, CRM workflows, and bespoke integrations. We identify the repetitive tasks draining your time and build systems that handle them automatically. From simple automations to complex multi-step workflows.',
     icon: 'zap',
-    color: '#8b5cf6',
+    color: '#C5A55A',
+    packages: [
+      { label: 'Website Chatbot', price: 'from R5,000' },
+      { label: 'WhatsApp Business Automation', price: 'from R10,000' },
+      { label: 'Email Automation Sequences', price: 'from R8,000' },
+      { label: 'CRM Setup + Workflow Automation', price: 'from R10,000' },
+      { label: 'Custom Integration (per workflow)', price: 'from R3,000' },
+    ],
     steps: [
       {
         title: 'What Needs Automating?',
@@ -212,8 +317,16 @@ const SERVICE_TYPES = [
     title: 'App Building',
     tagline: 'Custom systems built for your business.',
     description: 'Databases, automations, dashboards, portals, and bespoke tools — built around how you work.',
+    frameworkTag: 'BUILD + AUTOMATE',
+    learnMore: 'Bespoke business applications — client portals, booking systems, inventory management, CRM tools, and internal dashboards. We design and build the exact system your business needs, with integrations to your existing tools. Includes training, documentation, and ongoing support options.',
     icon: 'database',
-    color: '#0ea5e9',
+    color: '#2D2D2D',
+    packages: [
+      { label: 'Lite System (database + basic UI)', price: 'from R15,000' },
+      { label: 'Standard System (full features + integrations)', price: 'from R30,000' },
+      { label: 'Advanced System (complex logic + admin)', price: 'from R50,000' },
+      { label: 'Ongoing Development (monthly retainer)', price: 'from R8,000/mo' },
+    ],
     steps: [
       {
         title: 'What Do You Need Built?',
@@ -253,12 +366,20 @@ const SERVICE_TYPES = [
     ],
   },
   {
-    id: 'logo',
-    title: 'Logo Design',
-    tagline: 'Your brand, distilled.',
-    description: 'A logo that captures who you are — professional, memorable, and uniquely yours.',
+    id: 'branding',
+    title: 'Branding & Identity',
+    tagline: 'Your complete brand, defined.',
+    description: 'Logo, style guide, colours, typography, letterheads — everything that makes your brand yours.',
+    frameworkTag: 'BUILD',
+    learnMore: 'Complete brand identity design — from logo concepts through to a full brand guidelines document. We create the visual language that makes your business unmistakable. Includes multiple concepts, revision rounds, and final delivery in all formats you need.',
     icon: 'pen-tool',
-    color: '#ec4899',
+    color: '#a88d44',
+    packages: [
+      { label: 'Logo Only (2-3 concepts, 2 revisions)', price: 'from R2,500' },
+      { label: 'Logo + Style Guide', price: 'from R5,000' },
+      { label: 'Full Brand Identity (logo, stationery, guidelines)', price: 'from R8,000' },
+      { label: 'Brand Refresh (modernise existing brand)', price: 'from R4,000' },
+    ],
     steps: [
       {
         title: 'About Your Brand',
@@ -277,17 +398,60 @@ const SERVICE_TYPES = [
           { name: 'existingLogo', label: 'Do you have an existing logo?', type: 'select', options: ['No — starting fresh', 'Yes — needs a complete redesign', 'Yes — needs a refresh/modernisation'] },
           { name: 'references', label: 'Logos or brands you admire', type: 'textarea', placeholder: 'Share names, URLs, or describe styles you like...' },
           { name: 'mustInclude', label: 'Anything the logo must include?', type: 'textarea', placeholder: 'Specific icon, symbol, tagline, etc.' },
+        ],
+      },
+      {
+        title: 'Package & Deliverables',
+        fields: [
           { name: 'package', label: 'Choose a package', type: 'select', required: true, options: [
-            'Basic Logo (2-3 concepts, 2 revisions) — from R2,500',
-            'Premium Logo + Brand Guidelines — from R5,000',
+            'Logo Only (2-3 concepts, 2 revisions) — from R2,500',
+            'Logo + Style Guide (colours, typography, usage rules) — from R5,000',
+            'Full Brand Identity (logo, style guide, letterhead, business cards, email signature) — from R8,000',
+            'Brand Refresh (modernise existing brand) — from R4,000',
             'Not sure — advise me'
           ]},
+          { name: 'deliverables', label: 'What do you need?', type: 'multicheck', options: ['Logo', 'Colour Palette', 'Typography Guide', 'Letterhead', 'Business Card', 'Email Signature', 'Social Media Templates', 'Brand Guidelines Document', 'Favicon & Icons'] },
           { name: 'additionalNotes', label: 'Anything else?', type: 'textarea' },
         ],
       },
     ],
   },
 ];
+
+/* Coaching brief form (shared for all coaching types) */
+const COACHING_BRIEF = {
+  id: 'coaching',
+  title: 'Coaching Application',
+  tagline: 'Begin your journey.',
+  steps: [
+    {
+      title: 'About You',
+      fields: [
+        { name: 'fullName', label: 'Full Name', type: 'text', required: true },
+        { name: 'email', label: 'Email', type: 'text', required: true },
+        { name: 'phone', label: 'Phone Number', type: 'text', required: true },
+        { name: 'business', label: 'Business Name (if applicable)', type: 'text' },
+      ],
+    },
+    {
+      title: 'Your Goals',
+      fields: [
+        { name: 'mainChallenge', label: 'What is your biggest challenge right now?', type: 'textarea', required: true, placeholder: 'Be as specific or general as you like...' },
+        { name: 'desiredOutcome', label: 'What would success look like for you?', type: 'textarea', required: true, placeholder: 'Where do you want to be in 3-6 months?' },
+        { name: 'previousCoaching', label: 'Have you worked with a coach before?', type: 'select', options: ['No — this is my first time', 'Yes — briefly', 'Yes — extensively'] },
+      ],
+    },
+    {
+      title: 'Availability',
+      fields: [
+        { name: 'preferredDay', label: 'Preferred day(s)', type: 'multicheck', options: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] },
+        { name: 'preferredTime', label: 'Preferred time', type: 'select', options: ['Morning (8-12)', 'Afternoon (12-5)', 'Evening (5-8)', 'Flexible'] },
+        { name: 'sessionFormat', label: 'Session format', type: 'select', required: true, options: ['Online (Zoom/Google Meet)', 'In person', 'Phone call', 'Flexible'] },
+        { name: 'additionalNotes', label: 'Anything else you want us to know?', type: 'textarea', placeholder: 'Concerns, preferences, health considerations...' },
+      ],
+    },
+  ],
+};
 
 const serviceIcons = {
   globe: (
@@ -331,7 +495,11 @@ const serviceIcons = {
 };
 
 export default function Services({ client }) {
+  const navigate = useNavigate();
   const [selectedService, setSelectedService] = useState(null);
+  const [coachingApply, setCoachingApply] = useState(null); // { type, tier }
+  const [expandedCoaching, setExpandedCoaching] = useState(null); // coaching id
+  const [expandedService, setExpandedService] = useState(null); // service id
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -351,9 +519,26 @@ export default function Services({ client }) {
       ...prev,
     ]);
     setSelectedService(null);
+    setCoachingApply(null);
     return result;
   };
 
+  // Show coaching application form
+  if (coachingApply) {
+    const brief = {
+      ...COACHING_BRIEF,
+      title: `${coachingApply.type} — ${coachingApply.tier}`,
+    };
+    return (
+      <ServiceForm
+        service={brief}
+        onSubmit={(data) => handleSubmit('coaching', { ...data, coachingType: coachingApply.type, selectedPackage: coachingApply.tier })}
+        onBack={() => setCoachingApply(null)}
+      />
+    );
+  }
+
+  // Show done-for-you service form
   if (selectedService) {
     const service = SERVICE_TYPES.find((s) => s.id === selectedService);
     return (
@@ -368,68 +553,226 @@ export default function Services({ client }) {
   return (
     <div className="services-page">
       <div className="page-header">
-        <h2>Done-for-You Services</h2>
+        <h2>Our Services</h2>
         <p className="page-subtitle">
-          Tell us what you need. We will handle the rest — from strategy to delivery.
+          Everything you need to grow — coaching, done-for-you services, and courses.
         </p>
       </div>
 
-      <div className="services-intro">
-        <div className="services-intro__card">
-          <h3>How it works</h3>
-          <div className="services-intro__steps">
-            <div className="services-intro__step">
-              <div className="services-intro__number">1</div>
-              <div>
-                <strong>Choose a service</strong>
-                <p>Pick what you need from the options below.</p>
+      {/* ===== SECTION 1: COACHING ===== */}
+      <div className="services-section">
+        <div className="services-section__header">
+          <h3 className="services-section__title">Coaching</h3>
+          <p className="services-section__subtitle">
+            1-on-1 sessions tailored to where you are and where you want to go. Free 30-minute discovery call to get started.
+          </p>
+        </div>
+
+        <div className="coaching-grid">
+          {COACHING_TYPES.map((type) => (
+            <div key={type.id} className="coaching-card" style={{ '--accent': type.color }}>
+              <div className="coaching-card__header" style={{ background: type.color }}>
+                {type.badge && <span className={`coaching-card__badge coaching-card__badge--${type.badge.toLowerCase()}`}>{type.badge}</span>}
+                <h4>{type.title}</h4>
+                <p>{type.tagline}</p>
+                <div className="coaching-card__framework">
+                  {type.framework.split(' + ').map((f) => (
+                    <span key={f} className="coaching-framework-tag">{f}</span>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="services-intro__step">
-              <div className="services-intro__number">2</div>
-              <div>
-                <strong>Fill in your brief</strong>
-                <p>Answer a few questions so we understand your vision.</p>
+
+              {/* Learn More */}
+              <button
+                className="coaching-card__learn-more"
+                onClick={() => setExpandedCoaching(expandedCoaching === type.id ? null : type.id)}
+              >
+                {expandedCoaching === type.id ? 'Show less' : 'Learn more'}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: expandedCoaching === type.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              {expandedCoaching === type.id && (
+                <div className="coaching-card__about">
+                  <p>{type.frameworkDesc}</p>
+                </div>
+              )}
+
+              <div className="coaching-card__tiers">
+                {type.tiers.map((tier) => (
+                  <div key={tier.label + tier.price} className="coaching-tier">
+                    <div className="coaching-tier__info">
+                      <span className="coaching-tier__label">{tier.label}</span>
+                      {tier.discount && <span className="coaching-tier__discount">{tier.discount}</span>}
+                    </div>
+                    <div className="coaching-tier__action">
+                      <span className="coaching-tier__price">{tier.price}</span>
+                      {type.isSpeaking ? (
+                        <a
+                          className="btn btn--sm btn--outline"
+                          href={`mailto:hello@freedomhub.io?subject=${encodeURIComponent(tier.label + ' Enquiry')}`}
+                          style={{ textDecoration: 'none' }}
+                        >
+                          Enquire
+                        </a>
+                      ) : (
+                        <button
+                          className="btn btn--sm btn--outline"
+                          onClick={() => setCoachingApply({ type: type.title, tier: tier.label + ' — ' + tier.price })}
+                        >
+                          Apply
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
+              {type.isSpeaking ? (
+                <>
+                  {type.speakingTopics && (
+                    <div className="coaching-card__speaking-topics">
+                      <h5>Signature Topics</h5>
+                      <div className="speaking-signatures-list">
+                        {type.speakingTopics.map((topic) => (
+                          <span key={topic} className="speaking-signature-tag">{topic}</span>
+                        ))}
+                      </div>
+                      {type.speakingVenues && (
+                        <p className="speaking-venues">{type.speakingVenues}</p>
+                      )}
+                    </div>
+                  )}
+                  <a
+                    className="coaching-card__discovery"
+                    href="mailto:hello@freedomhub.io?subject=Speaking%20%2F%20Corporate%20Enquiry"
+                    style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}
+                  >
+                    Send an Enquiry
+                  </a>
+                </>
+              ) : (
+                <button
+                  className="coaching-card__discovery"
+                  onClick={() => setCoachingApply({ type: type.title, tier: 'Free Discovery Call (30 min)' })}
+                >
+                  Book a Free Discovery Call
+                </button>
+              )}
             </div>
-            <div className="services-intro__step">
-              <div className="services-intro__number">3</div>
-              <div>
-                <strong>We get to work</strong>
-                <p>Track progress in real-time under Projects.</p>
+          ))}
+        </div>
+      </div>
+
+      {/* ===== SECTION 2: DONE-FOR-YOU ===== */}
+      <div className="services-section">
+        <div className="services-section__header">
+          <h3 className="services-section__title">Done-for-You Services</h3>
+          <p className="services-section__subtitle">
+            Tell us what you need. We handle everything from strategy to delivery — you just approve.
+          </p>
+        </div>
+
+        <div className="coaching-grid">
+          {SERVICE_TYPES.map((service) => (
+            <div key={service.id} className="coaching-card" style={{ '--accent': service.color }}>
+              <div className="coaching-card__header" style={{ background: service.color }}>
+                <div className="service-card__icon-inline">
+                  {serviceIcons[service.icon]}
+                </div>
+                <h4>{service.title}</h4>
+                <p>{service.tagline}</p>
+                {service.frameworkTag && (
+                  <div className="coaching-card__framework">
+                    {service.frameworkTag.split(' + ').map((f) => (
+                      <span key={f} className="coaching-framework-tag">{f}</span>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-            <div className="services-intro__step">
-              <div className="services-intro__number">4</div>
-              <div>
-                <strong>Review & launch</strong>
-                <p>Approve the final work. We handle deployment.</p>
+
+              {/* Learn More */}
+              <button
+                className="coaching-card__learn-more"
+                onClick={() => setExpandedService(expandedService === service.id ? null : service.id)}
+              >
+                {expandedService === service.id ? 'Show less' : 'Learn more'}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: expandedService === service.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              {expandedService === service.id && (
+                <div className="coaching-card__about">
+                  <p>{service.learnMore}</p>
+                </div>
+              )}
+
+              {/* Packages */}
+              <div className="coaching-card__tiers">
+                {service.packages.map((pkg) => (
+                  <div key={pkg.label} className="coaching-tier">
+                    <div className="coaching-tier__info">
+                      <span className="coaching-tier__label">{pkg.label}</span>
+                    </div>
+                    <div className="coaching-tier__action">
+                      <span className="coaching-tier__price">{pkg.price}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
+
+              {/* SEO Add-ons (website only) */}
+              {service.addons && (
+                <div className="coaching-card__addons">
+                  <h5>SEO & Visibility Add-ons</h5>
+                  {service.addons.map((addon) => (
+                    <div key={addon.label} className="coaching-tier coaching-tier--addon">
+                      <div className="coaching-tier__info">
+                        <span className="coaching-tier__label">{addon.label}</span>
+                      </div>
+                      <div className="coaching-tier__action">
+                        <span className="coaching-tier__price">{addon.price}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <button
+                className="coaching-card__discovery"
+                onClick={() => setSelectedService(service.id)}
+              >
+                Start Brief
+              </button>
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ===== SECTION 3: COURSES ===== */}
+      <div className="services-section">
+        <div className="services-section__header">
+          <h3 className="services-section__title">Courses</h3>
+          <p className="services-section__subtitle">
+            Learn at your own pace. Self-guided courses to build your skills and grow your business.
+          </p>
+        </div>
+
+        <div className="courses-coming-soon">
+          <div className="courses-coming-soon__card" onClick={() => navigate('/learn')} style={{ cursor: 'pointer' }}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#C5A55A' }}>
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
+            <h4>Academy</h4>
+            <p>Courses, quests, and guided programs on business foundations, AI for entrepreneurs, and personal mastery. Learn at your own pace with gamification and community.</p>
+            <button className="btn btn--primary btn--sm" style={{ marginTop: '12px' }}>Enter Academy</button>
           </div>
         </div>
       </div>
 
-      <div className="services-grid">
-        {SERVICE_TYPES.map((service) => (
-          <button
-            key={service.id}
-            className="service-card"
-            onClick={() => setSelectedService(service.id)}
-          >
-            <div className="service-card__icon" style={{ color: service.color }}>
-              {serviceIcons[service.icon]}
-            </div>
-            <h3 className="service-card__title">{service.title}</h3>
-            <p className="service-card__tagline">{service.tagline}</p>
-            <p className="service-card__desc">{service.description}</p>
-            <span className="service-card__cta">Start Brief</span>
-          </button>
-        ))}
-      </div>
-
+      {/* ===== EXISTING REQUESTS ===== */}
       {requests.length > 0 && (
-        <div className="services-requests">
+        <div className="services-requests" style={{ marginTop: '40px' }}>
           <h3>Your Requests</h3>
           <div className="services-requests__list">
             {requests.map((req) => {
@@ -440,7 +783,7 @@ export default function Services({ client }) {
                     {serviceIcons[serviceType?.icon || 'globe']}
                   </div>
                   <div className="request-item__info">
-                    <strong>{serviceType?.title || req.service}</strong>
+                    <strong>{serviceType?.title || (req.service === 'coaching' ? 'Coaching' : req.service)}</strong>
                     <span className="request-item__date">
                       {req.date ? new Date(req.date).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
                     </span>

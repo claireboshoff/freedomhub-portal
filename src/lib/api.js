@@ -141,6 +141,26 @@ export const api = {
     return request('review', { method: 'POST', body: { projectId, ...reviewData } });
   },
 
+  // Academy / Courses
+  coursesPublished() {
+    return request('courses-published');
+  },
+  courseDetail(slug) {
+    return request('course-detail', { body: { slug } });
+  },
+  myEnrollments() {
+    return request('my-enrollments');
+  },
+  enroll(courseId) {
+    return request('enroll', { body: { courseId } });
+  },
+  myProgress() {
+    return request('my-progress');
+  },
+  leaderboard(courseId) {
+    return request('leaderboard', { body: { courseId } });
+  },
+
   // Admin
   adminDashboard() {
     return request('admin-dashboard');
@@ -165,6 +185,17 @@ export const api = {
   },
   adminUpdateInvoice(invoiceId) {
     return request('admin-update-invoice', { body: { invoiceId } });
+  },
+
+  // Coaching
+  coachingClients() {
+    return request('coaching-clients');
+  },
+  coachingClientDetail(clientId) {
+    return request('coaching-client-detail', { body: { clientId } });
+  },
+  updateCoachingProfile(clientId, profileData) {
+    return request('update-coaching-profile', { body: { clientId, ...profileData } });
   },
 
 };
