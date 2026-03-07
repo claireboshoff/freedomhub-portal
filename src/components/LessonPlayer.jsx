@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../lib/api';
 import QuizSection from './QuizSection';
+import LessonDiscussion from './LessonDiscussion';
 
 /* ---- Content Type Icons (16x16 inline SVG, matches CourseDetail) ---- */
 const CONTENT_ICONS = {
@@ -239,7 +240,7 @@ function XPNotification({ xp, visible }) {
 /* ==================================================================
    MAIN COMPONENT
    ================================================================== */
-export default function LessonPlayer() {
+export default function LessonPlayer({ client }) {
   const { slug, lessonId } = useParams();
   const navigate = useNavigate();
 
@@ -601,6 +602,13 @@ export default function LessonPlayer() {
             <span className="lesson-topbar__module">{lesson.moduleTitle || 'Module'}</span>
             <span className="lesson-topbar__sep">/</span>
             <span className="lesson-topbar__current">{lesson.title}</span>
+            <button
+              className="btn btn--ghost btn--sm"
+              style={{ marginLeft: '0.75rem', fontSize: '0.8rem', color: 'var(--gold, #c5a55a)' }}
+              onClick={() => navigate(`/learn/${slug}/community`)}
+            >
+              Community
+            </button>
           </div>
           <div className="lesson-topbar__progress">
             <span className="lesson-topbar__progress-text">
@@ -838,11 +846,8 @@ export default function LessonPlayer() {
           />
         )}
 
-        {/* ---- DISCUSSION PLACEHOLDER ---- */}
-        <div className="placeholder-card">
-          <h3>Discussion</h3>
-          <p>Discussion coming soon -- Sprint 12</p>
-        </div>
+        {/* ---- DISCUSSION ---- */}
+        <LessonDiscussion lessonId={lessonId} courseId={lesson.courseId || ''} client={client} />
 
         {/* ---- BOTTOM ACTIONS ---- */}
         <div className="lesson-bottom-actions">

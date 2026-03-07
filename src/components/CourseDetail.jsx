@@ -314,6 +314,15 @@ export default function CourseDetail() {
                 Review Course
               </button>
             )}
+            {status !== 'not-enrolled' && (
+              <button
+                className="btn btn--ghost"
+                onClick={() => navigate(`/learn/${slug}/community`)}
+                style={{ color: 'var(--gold, #c5a55a)', fontWeight: 600 }}
+              >
+                Community
+              </button>
+            )}
           </div>
         </div>
       </div>

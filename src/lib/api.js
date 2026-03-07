@@ -181,6 +181,18 @@ export const api = {
   certificateDetail(certificateId) {
     return request('certificate-detail', { body: { certificateId } });
   },
+  lessonDiscussions(lessonId) {
+    return request('lesson-discussions', { body: { lessonId } });
+  },
+  courseDiscussions(courseId) {
+    return request('course-discussions', { body: { courseId } });
+  },
+  postDiscussion(data) {
+    return request('post-discussion', { body: data });
+  },
+  likeDiscussion(discussionId) {
+    return request('like-discussion', { body: { discussionId } });
+  },
 
   // Admin
   adminDashboard() {

@@ -20,6 +20,7 @@ const CourseDetail = lazy(() => import('./components/CourseDetail'));
 const LessonPlayer = lazy(() => import('./components/LessonPlayer'));
 const MyCertificates = lazy(() => import('./components/MyCertificates'));
 const CertificateView = lazy(() => import('./components/CertificateView'));
+const CourseCommunity = lazy(() => import('./components/CourseCommunity'));
 
 // Admin components (lazy loaded)
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
@@ -147,6 +148,7 @@ function App() {
           <Route path="/learn/certificates" element={<Suspense fallback={adminFallback}><MyCertificates client={client} /></Suspense>} />
           <Route path="/learn/certificate/:certId" element={<Suspense fallback={adminFallback}><CertificateView client={client} /></Suspense>} />
           <Route path="/learn/:slug/lesson/:lessonId" element={<Suspense fallback={adminFallback}><LessonPlayer client={client} /></Suspense>} />
+          <Route path="/learn/:slug/community" element={<Suspense fallback={adminFallback}><CourseCommunity client={client} /></Suspense>} />
           <Route path="/services" element={<Services client={client} />} />
           <Route path="/projects" element={<ProjectHub client={client} />} />
           <Route path="/projects/:projectId" element={<ProjectFlow client={client} />} />
